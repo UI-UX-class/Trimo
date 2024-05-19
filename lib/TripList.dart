@@ -9,9 +9,25 @@ class TripList extends StatefulWidget {
 }
 
 class _TripListState extends State<TripList> {
+  // 여행 데이터를 저장할 리스트 => date는 datetime 형태 그대로 받아와도 될라나
+  final List<Map<String, String>> trips = [
+    {'title': '친구들과 부산여행', 'location': '부산', 'date': '05.10~05.13', 'imagePath': 'images/busanTest.jpeg'}
+  ];
+
+  // 카드를 추가하는 함수
+  void addTrip() {
+    setState(() {
+      trips.add({
+        'title': '새로운 여행',
+        'location': '새로운 장소',
+        'date': '새로운 날짜',
+        'imagePath': 'images/busanTest.jpeg',
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    var count = 2;
     return Scaffold(
       appBar: AppBar(
         title: const Text(' '),
@@ -61,13 +77,14 @@ class _TripListState extends State<TripList> {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: count, // 항목 개수
+              itemCount: trips.length,
               itemBuilder: (context, position) {
+                final trip = trips[position];
                 return GestureDetector(
                   onTap: () {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ShowTrip())
+                      context,
+                      MaterialPageRoute(builder: (context) => ShowTrip()),
                     );
                   },
                   child: Card(
@@ -90,7 +107,7 @@ class _TripListState extends State<TripList> {
                           ClipRRect(
                             borderRadius: BorderRadius.circular(8.0),
                             child: Image.asset(
-                              "images/busanTest.jpeg",
+                              trip['imagePath']!,
                               height: 100,
                               width: 100,
                               fit: BoxFit.cover,
@@ -100,22 +117,22 @@ class _TripListState extends State<TripList> {
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
+                              children: [
                                 Text(
-                                  "친구들과 부산여행",
-                                  style: TextStyle(
+                                  trip['title']!,
+                                  style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black,
                                   ),
                                 ),
-                                SizedBox(height: 8.0),
+                                const SizedBox(height: 8.0),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
                                     Text(
-                                      "부산",
-                                      style: TextStyle(
+                                      trip['location']!,
+                                      style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black,
@@ -123,8 +140,8 @@ class _TripListState extends State<TripList> {
                                       textAlign: TextAlign.center,
                                     ),
                                     Text(
-                                      "05.10~05.13",
-                                      style: TextStyle(
+                                      trip['date']!,
+                                      style: const TextStyle(
                                         fontSize: 16,
                                         color: Colors.black,
                                       ),
@@ -149,14 +166,10 @@ class _TripListState extends State<TripList> {
               Align(
                 alignment: Alignment.centerRight,
                 child: ElevatedButton(
-                  onPressed: () {
-                    // 기능
-                  },
-                  child: Text(
-                      "새 일지 생성",
-                      style: TextStyle(
-                        color: Colors.black
-                      ),
+                  onPressed: addTrip,
+                  child: const Text(
+                    "새 일지 생성",
+                    style: TextStyle(color: Colors.black),
                   ),
                 ),
               ),
@@ -166,14 +179,10 @@ class _TripListState extends State<TripList> {
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: ElevatedButton(
-                    onPressed: () {
-                      // 기능
-                    },
-                    child: Text(
-                        "새 일지 생성",
-                      style: TextStyle(
-                        color: Colors.black
-                      ),
+                    onPressed: addTrip,
+                    child: const Text(
+                      "새 일지 생성",
+                      style: TextStyle(color: Colors.black),
                     ),
                   ),
                 ),
@@ -207,7 +216,7 @@ class GradientText extends StatelessWidget {
       },
       child: Text(
         text,
-        style: style?.copyWith(color: Colors.white) ?? TextStyle(color: Colors.white),
+        style: style?.copyWith(color: Colors.white) ?? const TextStyle(color: Colors.white),
       ),
     );
   }
