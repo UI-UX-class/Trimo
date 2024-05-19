@@ -11,6 +11,7 @@ class TripList extends StatefulWidget {
 class _TripListState extends State<TripList> {
   @override
   Widget build(BuildContext context) {
+    var count = 2;
     return Scaffold(
       appBar: AppBar(
         title: const Text(' '),
@@ -20,12 +21,14 @@ class _TripListState extends State<TripList> {
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Text(
-                  'trimo',
-                  textAlign: TextAlign.center,
+              children: [
+                GradientText(
+                  'TRIMO',
+                  gradient: LinearGradient(
+                    colors: [Color(0xFF002FFF), Color(0xFF000000)],
+                  ),
                   style: TextStyle(
-                    fontSize: 48,
+                    fontSize: 40,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -39,12 +42,13 @@ class _TripListState extends State<TripList> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
                 Text(
-                  '2024',
+                  '>2024',
                   style: TextStyle(
-                    fontSize: 15,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(200, 3, 26, 147),
                   ),
                 ),
-                SizedBox(height: 4.0),
                 Text(
                   '여행 일지',
                   style: TextStyle(
@@ -57,57 +61,80 @@ class _TripListState extends State<TripList> {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: 10, // 항목 개수
+              itemCount: count, // 항목 개수
               itemBuilder: (context, position) {
                 return GestureDetector(
                   onTap: () {
                     Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context)=> ShowTrip())
+                        MaterialPageRoute(builder: (context) => ShowTrip())
                     );
                   },
                   child: Card(
                     margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                    child: Padding(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16.0),
+                        gradient: LinearGradient(
+                          colors: [Color(0xFF9FD5E4), Color(0xFF608FB3)], // 파란색 그라데이션
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                      ),
                       padding: const EdgeInsets.all(16.0),
                       child: Row(
                         children: <Widget>[
-                          Image.asset(
-                            "images/testimg.jpeg",
-                            height: 100,
-                            width: 100,
-                            fit: BoxFit.contain,
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: Image.asset(
+                              "images/busanTest.jpeg",
+                              height: 100,
+                              width: 100,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                           const SizedBox(width: 16.0),
                           Expanded(
                             child: Column(
-                              //왼쪽 정렬 시킴
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: const [
                                 Text(
-                                  "여행 제목",
+                                  "친구들과 부산여행",
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
+                                    color: Colors.black,
                                   ),
                                 ),
                                 SizedBox(height: 8.0),
-                                Text(
-                                  "여행 장소",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                Text(
-                                  "여행 일정",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                  ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Text(
+                                      "부산",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    Text(
+                                      "05.10~05.13",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.black,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
                           ),
-                          const Icon(Icons.arrow_forward_ios),
                         ],
                       ),
                     ),
@@ -116,16 +143,71 @@ class _TripListState extends State<TripList> {
               },
             ),
           ),
-          ElevatedButton(onPressed: (){
-
-          },
-              child: Text("새 일지 생성"),
-          ),
-          ElevatedButton(onPressed: (){
-
-          },
-              child: Text("일지 관리"))
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              Align(
+                alignment: Alignment.centerRight,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // 기능
+                  },
+                  child: Text(
+                      "새 일지 생성",
+                      style: TextStyle(
+                        color: Colors.black
+                      ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 150,
+                height: 60,
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // 기능
+                    },
+                    child: Text(
+                        "새 일지 생성",
+                      style: TextStyle(
+                        color: Colors.black
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            ],
+          )
         ],
+      ),
+    );
+  }
+}
+
+class GradientText extends StatelessWidget {
+  GradientText(
+      this.text, {
+        required this.gradient,
+        this.style,
+      });
+
+  final String text;
+  final TextStyle? style;
+  final Gradient gradient;
+
+  @override
+  Widget build(BuildContext context) {
+    return ShaderMask(
+      shaderCallback: (bounds) {
+        return gradient.createShader(
+          Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+        );
+      },
+      child: Text(
+        text,
+        style: style?.copyWith(color: Colors.white) ?? TextStyle(color: Colors.white),
       ),
     );
   }

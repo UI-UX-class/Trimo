@@ -10,6 +10,15 @@ class ShowTrip extends StatefulWidget {
 class _ShowTripState extends State<ShowTrip> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("하이하이"),
+      ),
+      body: Column(
+        children: <Text>[
+          Text("게시물 보는데임")
+        ],
+      ),
+    );
   }
 }
