@@ -79,7 +79,7 @@ class _SignIn extends State<SignIn> {
                         ),
                         child: TextField(
                           decoration: InputDecoration(
-                            hintText: '승희는5살',
+                            hintText: 'id',
                             contentPadding: EdgeInsets.all(10),
                           ),
                         ),
@@ -109,7 +109,7 @@ class _SignIn extends State<SignIn> {
                         ),
                         child: TextField(
                           decoration: InputDecoration(
-                            hintText: '승희는5살',
+                            hintText: 'password',
                             contentPadding: EdgeInsets.all(10),
                           ),
                         ),
