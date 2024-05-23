@@ -1,27 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'TripList.dart';
-import 'package:card_swiper/card_swiper.dart';
 import './NewPage.dart';
-import './MyPage.dart';
 
 void main() {
-  runApp(TrimoApp());
+  runApp(maybeMyPage());
 }
 
-class TrimoApp extends StatelessWidget {
+class maybeMyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
       home: MainPage(),
       routes: {
-        '/newPage': (context) => NewPage(),
-        '/myPage': (context) => maybeMyPage(), // 경로와 해당 페이지를 매핑
+        '/newPage': (context) => NewPage(), // 경로와 해당 페이지를 매핑
       },
     );
   }
@@ -33,11 +24,6 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  final List<String> bannerList = [
-    'assets/travel_banner.png',
-    'assets/travel_banner2.png',
-    'assets/travel_banner3.png'
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -80,32 +66,20 @@ class _MainPageState extends State<MainPage> {
                                 borderRadius: BorderRadius.circular(3.0),
                                 child: Row(children: [
                                   Image.asset(
-                                    'assets/recent_travel.png',
+                                    'assets/profile_background.png',
                                     height: 200,
                                     fit: BoxFit.contain,
                                   ),
                                 ])),
                             Positioned(
-                              bottom: 25,
-                              left: 25,
+                              bottom: 15,
+                              left: 0,// 텍스트를 이미지의 맨 아래로 정렬
+                              right: 0,
                               child: Text(
-                                '부산',
+                                '로그인이 필요합니다.',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  fontSize: 27,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              bottom: 0, // 텍스트를 이미지의 맨 아래로 정렬
-                              right: 10,
-                              child: Text(
-                                '05.10 ~ 05.13',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 19,
+                                  fontSize: 15,
                                   color: Colors.white,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -115,35 +89,6 @@ class _MainPageState extends State<MainPage> {
                       SizedBox(width: 20),
                       Column(
                         children: [
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamed(context, '/newPage'); // 최근 여행 페이지 이동
-                            },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(3.0),
-                              child: Stack(
-                                children: <Widget>[
-                                  Image.asset('assets/new_travel.png',
-                                      height: 90, fit: BoxFit.contain),
-                                  Positioned(
-                                    bottom: 3,
-                                    left: 0, // 텍스트를 중앙에 정렬
-                                    right: 0, // 텍스트를 중앙에 정렬
-                                    child: Text(
-                                      '새로운 여행',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 20),
                           GestureDetector(
                             onTap: () {
                               Navigator.pushNamed(context, '/newPage'); // 최근 여행 페이지 이동
@@ -172,81 +117,23 @@ class _MainPageState extends State<MainPage> {
                               ),
                             ),
                           ),
-                        ],
-                      )
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  Container(
-                    height: 85,
-                    width: 300,
-                    child: Swiper(
-                      itemBuilder: (BuildContext context, int index) {
-                        return Image.asset(
-                          bannerList[index],
-                          fit: BoxFit.fill,
-                        );
-                      },
-                      itemCount: bannerList.length,
-                      pagination: SwiperPagination(
-                        builder: DotSwiperPaginationBuilder(
-                          activeColor: Colors.indigo, // 활성화된 인디케이터 색상
-                          color: Colors.white, // 비활성화된 인디케이터 색상
-                        ),
-                      ),
-                      autoplay: true,
-                      autoplayDelay: 8000, // 8초 (8000밀리초)
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, '/myPage'); // 최근 여행 페이지 이동
-                        },
-                        child: Transform.translate(
-                          offset: const Offset(5, 0),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(3.0),
-                            child: Stack(children: <Widget>[
-                              Image.asset('assets/mypage.png',
-                                  height: 96, fit: BoxFit.contain),
-                              Positioned(
-                                bottom: 5,
-                                left: 0, // 텍스트를 중앙에 정렬
-                                right: 0, // 텍스트를 중앙에 정렬
-                                child: Text(
-                                  '마이페이지',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ]),
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, '/newPage'); // 최근 여행 페이지 이동
-                        },
-                        child: Transform.translate(
-                            offset: const Offset(-5, 0),
+                          SizedBox(height: 20),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(context, '/newPage'); // 최근 여행 페이지 이동
+                            },
                             child: ClipRRect(
-                                borderRadius: BorderRadius.circular(3.0),
-                                child: Stack(children: <Widget>[
-                                  Image.asset('assets/all_travel.png',
-                                      height: 96, fit: BoxFit.contain),
+                              borderRadius: BorderRadius.circular(3.0),
+                              child: Stack(
+                                children: <Widget>[
+                                  Image.asset('assets/mypage.png',
+                                      height: 90, fit: BoxFit.contain),
                                   Positioned(
-                                    bottom: 5,
-                                    left: 10,
+                                    bottom: 3,
+                                    left: 0, // 텍스트를 중앙에 정렬
+                                    right: 0, // 텍스트를 중앙에 정렬
                                     child: Text(
-                                      '전체 여행 일지',
+                                      '회원정보 수정',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontSize: 11,
@@ -255,10 +142,42 @@ class _MainPageState extends State<MainPage> {
                                       ),
                                     ),
                                   ),
-                                ]))),
-                      )],
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
                   ),
-                ],
+                  SizedBox(height: 20),
+                  Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(3.0),
+                        child: Stack(
+                          children: [
+                            Image.asset('assets/license.png',
+                                width: 305,
+                                height: 60, fit: BoxFit.fill),
+                            Positioned(
+                              top: 15,
+                              left: 0, // 텍스트를 중앙에 정렬
+                              right: 0, // 텍스트를 중앙에 정렬
+                              child: Text(
+                                '라이센스',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+
+                  )],
               ),
             ),
           ],
@@ -267,5 +186,3 @@ class _MainPageState extends State<MainPage> {
     );
   }
 }
-
-
