@@ -211,7 +211,7 @@ class _SignUp extends State<SignUp> {
                               GestureDetector(
                                 child: Padding(
                                   padding: EdgeInsets.all(5),
-                                  child: Image.asset('images/busanTest.jpeg',
+                                  child: Image.asset('assets/busanTest.jpeg',
                                       width: 100, height: 100, fit: BoxFit.fill),
                                 ),
                                 onTap: () {},
@@ -219,7 +219,7 @@ class _SignUp extends State<SignUp> {
                               GestureDetector(
                                 child: Padding(
                                   padding: EdgeInsets.all(5),
-                                  child: Image.asset('images/busanTest.jpeg',
+                                  child: Image.asset('assets/busanTest.jpeg',
                                       width: 100, height: 100, fit: BoxFit.fill),
                                 ),
                                 onTap: () {},
@@ -227,7 +227,7 @@ class _SignUp extends State<SignUp> {
                               GestureDetector(
                                 child: Padding(
                                   padding: EdgeInsets.all(5),
-                                  child: Image.asset('images/busanTest.jpeg',
+                                  child: Image.asset('assets/busanTest.jpeg',
                                       width: 100, height: 100, fit: BoxFit.fill),
                                 ),
                                 onTap: () {},
@@ -235,7 +235,7 @@ class _SignUp extends State<SignUp> {
                               GestureDetector(
                                 child: Padding(
                                   padding: EdgeInsets.all(5),
-                                  child: Image.asset('images/busanTest.jpeg',
+                                  child: Image.asset('assets/busanTest.jpeg',
                                       width: 100, height: 100, fit: BoxFit.fill),
                                 ),
                                 onTap: () {},
