@@ -1,36 +1,50 @@
 import 'package:flutter/material.dart';
+import 'WriteTrip.dart'; // WriteTrip 위젯을 불러옵니다.
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(const BottomSheetApp());
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class BottomSheetApp extends StatelessWidget {
+  const BottomSheetApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSwatch().copyWith(secondary: const Color(0xff6750a4)),
         useMaterial3: true,
       ),
-      home: const MainHome(),
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Bottom Sheet Sample')),
+        body: WriteTripButton(), // WriteTrip 버튼을 띄웁니다.
+      ),
     );
   }
 }
 
-class MainHome extends StatefulWidget {
-  const MainHome({super.key});
+class WriteTripButton extends StatelessWidget {
+  const WriteTripButton({Key? key}) : super(key: key);
 
-  @override
-  State<MainHome> createState() => _MainHomeState();
-}
-
-class _MainHomeState extends State<MainHome> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Center(
+      child: ElevatedButton(
+        child: const Text('Show WriteTrip Widget'),
+        onPressed: () {
+          showModalBottomSheet<void>(
+            context: context,
+            isScrollControlled: true,
+            builder: (BuildContext context) {
+              return WriteTrip(); // WriteTrip 모달 바텀 시트를 띄웁니다.
+            },
+          );
+        },
+      ),
+    );
   }
 }
+
+
+
+
+
+
