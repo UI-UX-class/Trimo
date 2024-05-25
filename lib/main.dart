@@ -2,8 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'TripList.dart';
 import 'package:card_swiper/card_swiper.dart';
+import 'package:url_launcher/url_launcher.dart';
 import './NewPage.dart';
 import './MyPage.dart';
+import './SignIn.dart';
+import './TripListYear.dart';
 
 void main() {
   runApp(TrimoApp());
@@ -21,7 +24,9 @@ class TrimoApp extends StatelessWidget {
       home: MainPage(),
       routes: {
         '/newPage': (context) => NewPage(),
-        '/myPage': (context) => maybeMyPage(), // 경로와 해당 페이지를 매핑
+        '/myPage': (context) => MyPage(),
+        '/signInPage': (context) => SignInTest(),
+        '/tripListYear': (context) => TripListYear(), // 경로와 해당 페이지를 매핑
       },
     );
   }
@@ -39,15 +44,32 @@ class _MainPageState extends State<MainPage> {
     'assets/travel_banner3.png'
   ];
 
+  final List<String> bannerUrls = [
+    'https://www.booking.com/',
+    'https://www.agoda.com/',
+    'https://www.hotels.com/'
+  ];
+
+  Future<void> _launchURL(String url) async {
+    final uri = Uri.parse(url);
+    if (!await launchUrl(uri)) {
+      throw 'Could not launch $url';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text(''),
+      ),
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
-              margin: EdgeInsets.only(top: 90.0, bottom: 40.0),
+              margin: EdgeInsets.only(top: 30.0, bottom: 40.0),
               child: ShaderMask(
                 shaderCallback: (bounds) => LinearGradient(
                   colors: [Colors.blueAccent, Colors.black],
@@ -117,7 +139,7 @@ class _MainPageState extends State<MainPage> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              Navigator.pushNamed(context, '/newPage'); // 최근 여행 페이지 이동
+                              Navigator.pushNamed(context, '/newPage'); // 새로운 여행 페이지 이동
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(3.0),
@@ -146,7 +168,7 @@ class _MainPageState extends State<MainPage> {
                           SizedBox(height: 20),
                           GestureDetector(
                             onTap: () {
-                              Navigator.pushNamed(context, '/newPage'); // 최근 여행 페이지 이동
+                              Navigator.pushNamed(context, '/signInPage'); // 로그인 페이지 이동
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(3.0),
@@ -182,9 +204,12 @@ class _MainPageState extends State<MainPage> {
                     width: 300,
                     child: Swiper(
                       itemBuilder: (BuildContext context, int index) {
-                        return Image.asset(
-                          bannerList[index],
-                          fit: BoxFit.fill,
+                        return GestureDetector(
+                          onTap: () => _launchURL(bannerUrls[index]),
+                          child: Image.asset(
+                            bannerList[index],
+                            fit: BoxFit.fill,
+                          ),
                         );
                       },
                       itemCount: bannerList.length,
@@ -233,7 +258,7 @@ class _MainPageState extends State<MainPage> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(context, '/newPage'); // 최근 여행 페이지 이동
+                          Navigator.pushNamed(context, '/tripListYear'); // 최근 여행 페이지 이동
                         },
                         child: Transform.translate(
                             offset: const Offset(-5, 0),
@@ -267,5 +292,3 @@ class _MainPageState extends State<MainPage> {
     );
   }
 }
-
-

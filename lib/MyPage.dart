@@ -1,39 +1,54 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import './main.dart';
 import './NewPage.dart';
+import './ChangeAccountInfo.dart';
+import './SignIn.dart';
 
 void main() {
-  runApp(maybeMyPage());
+  runApp(MyPage());
 }
 
-class maybeMyPage extends StatelessWidget {
+class MyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: MainPage(),
+      home: _MyPage(),
       routes: {
-        '/newPage': (context) => NewPage(), // 경로와 해당 페이지를 매핑
+        '/mainPage': (context) => TrimoApp(),
+        '/changeInfo': (context) => ChangeInfo(),
+        '/logIn': (context) => SignInTest(),// 경로와 해당 페이지를 매핑
       },
     );
   }
 }
 
-class MainPage extends StatefulWidget {
+class _MyPage extends StatefulWidget {
   @override
-  _MainPageState createState() => _MainPageState();
+  _MyPageState createState() => _MyPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _MyPageState extends State<_MyPage> {
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushNamed(context, '/mainPage'); // 메인 페이지로 이동
+          },
+        ),
+        title: const Text(''),
+      ),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
-              margin: EdgeInsets.only(top: 90.0, bottom: 40.0),
+              margin: EdgeInsets.only(top: 30.0, bottom: 40.0),
               child: ShaderMask(
                 shaderCallback: (bounds) => LinearGradient(
                   colors: [Colors.blueAccent, Colors.black],
@@ -59,7 +74,6 @@ class _MainPageState extends State<MainPage> {
                     children: [
                       GestureDetector(
                           onTap: () {
-                            Navigator.pushNamed(context, '/newPage'); // 최근 여행 페이지 이동
                           },
                           child: Stack(children: <Widget>[
                             ClipRRect(
@@ -71,6 +85,14 @@ class _MainPageState extends State<MainPage> {
                                     fit: BoxFit.contain,
                                   ),
                                 ])),
+                            Positioned(
+                                top: 10,
+                                left: 0,
+                                right: 0,
+                                child: Image.asset(
+                                'assets/no_profile.png',
+                                height: 130,
+                                fit: BoxFit.contain)),
                             Positioned(
                               bottom: 15,
                               left: 0,// 텍스트를 이미지의 맨 아래로 정렬
@@ -91,7 +113,7 @@ class _MainPageState extends State<MainPage> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              Navigator.pushNamed(context, '/newPage'); // 최근 여행 페이지 이동
+                              Navigator.pushNamed(context, '/logIn'); // 로그인 페이지 이동
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(3.0),
@@ -120,7 +142,7 @@ class _MainPageState extends State<MainPage> {
                           SizedBox(height: 20),
                           GestureDetector(
                             onTap: () {
-                              Navigator.pushNamed(context, '/newPage'); // 최근 여행 페이지 이동
+                              Navigator.pushNamed(context, '/changeInfo'); // 최근 여행 페이지 이동
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(3.0),
@@ -151,33 +173,59 @@ class _MainPageState extends State<MainPage> {
                     ],
                   ),
                   SizedBox(height: 20),
-                  Center(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(3.0),
-                        child: Stack(
-                          children: [
-                            Image.asset('assets/license.png',
-                                width: 305,
-                                height: 60, fit: BoxFit.fill),
-                            Positioned(
-                              top: 15,
-                              left: 0, // 텍스트를 중앙에 정렬
-                              right: 0, // 텍스트를 중앙에 정렬
-                              child: Text(
-                                '라이센스',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                  GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text("라이센스",
+                              style: TextStyle(
+                                fontSize: 18,
                               ),
                             ),
-                          ],
-                        ),
-                      )
-
-                  )],
+                            content: Text("이 앱의 라이센스 정보입니다."),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(); // 다이얼로그 닫기
+                                },
+                                child: Text("확인"),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(3.0),
+                      child: Stack(
+                        children: [
+                          Image.asset(
+                            'assets/license.png',
+                            width: 305,
+                            height: 60,
+                            fit: BoxFit.fill,
+                          ),
+                          Positioned(
+                            top: 15,
+                            left: 0, // 텍스트를 중앙에 정렬
+                            right: 0, // 텍스트를 중앙에 정렬
+                            child: Text(
+                              '라이센스',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
               ),
             ),
           ],

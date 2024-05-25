@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
+import './SignUp.dart';
+import './main.dart';
 
-// Test Main
-void main() {
-  runApp(SignInTest());
-}
-
-// Stateless Widget
 class SignInTest extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'SignIn',
       home: SignIn(),
+      routes: {
+        '/signUp': (context) => SignUpTest(),
+        '/mainPage': (context) => TrimoApp(),  // 메인 페이지 경로 추가
+      },
     );
   }
 }
 
-// StatefulWidget
 class SignIn extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -24,109 +23,144 @@ class SignIn extends StatefulWidget {
   }
 }
 
-// Design
 class _SignIn extends State<SignIn> {
+  final TextEditingController _idController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'TRIMO',
-          style: TextStyle(
-            letterSpacing: 5.0,
-            color: Colors.indigo,
-            fontSize: 30,
-          ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushNamed(context, '/mainPage'); // 메인 페이지로 이동
+          },
         ),
-        centerTitle: true,
+        title: const Text(' '),
       ),
-      body: Center(
+      resizeToAvoidBottomInset: false,
+      body: SafeArea(
         child: Column(
-          //mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            // TextField 칸
-            Padding(
-              padding:
-                  EdgeInsets.only(top: 70, left: 20, right: 20, bottom: 20),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: Color(0xAA1A4066),
+            Container(
+              margin: EdgeInsets.only(top: 30.0, bottom: 40.0),
+              child: ShaderMask(
+                shaderCallback: (bounds) => LinearGradient(
+                  colors: [Colors.blueAccent, Colors.black],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ).createShader(bounds),
+                child: Text(
+                  'TRIMO',
+                  style: TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue,
+                  ),
                 ),
-                child: Column(
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 60, right: 60, bottom: 20),
+              child: Container(
+                child: Stack(
                   children: <Widget>[
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 30, left: 20, bottom: 10),
-                        child: Text(
-                          '아이디',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.white,
-                            letterSpacing: 2.0,
-                          ),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(3.0),
+                      child: Row(children: [
+                        Image.asset(
+                          'assets/login_back.png',
+                          height: 220,
+                          width: 290,
+                          fit: BoxFit.fill,
                         ),
-                      ),
+                      ]),
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 15, right: 15, bottom: 20),
-                      child: Container(
-                        //color: Colors.white,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.white,
-                        ),
-                        child: TextField(
-                          decoration: InputDecoration(
-                            hintText: 'id',
-                            contentPadding: EdgeInsets.all(10),
+                    Column(
+                      children: <Widget>[
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 20, left: 20, bottom: 10),
+                            child: Text(
+                              '아이디',
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 20, bottom: 10),
-                        child: Text(
-                          '비밀번호',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.white,
-                            letterSpacing: 2.0,
+                        Padding(
+                          padding: EdgeInsets.only(left: 15, right: 15, bottom: 20),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: Colors.white,
+                            ),
+                            child: SizedBox(
+                              height: 40,
+                              width: 270,
+                              child: TextField(
+                                controller: _idController,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: 'ID',
+                                  contentPadding: EdgeInsets.all(10),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 15, right: 15, bottom: 35),
-                      child: Container(
-                        //color: Colors.white,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.white,
-                        ),
-                        child: TextField(
-                          decoration: InputDecoration(
-                            hintText: 'password',
-                            contentPadding: EdgeInsets.all(10),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 20, bottom: 10),
+                            child: Text(
+                              '비밀번호',
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 15, right: 15, bottom: 35),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: Colors.white,
+                            ),
+                            child: SizedBox(
+                              height: 40,
+                              width: 270,
+                              child: TextField(
+                                controller: _passwordController,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: 'Password',
+                                  contentPadding: EdgeInsets.all(10),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
             ),
-
-            // Login Button
             Container(
-              width: 350,
+              width: 290,
               height: 50,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
-                //color: Color(0xAA1A4066),
               ),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -135,7 +169,12 @@ class _SignIn extends State<SignIn> {
                     borderRadius: BorderRadius.circular(5),
                   ),
                 ),
-                onPressed: () {}, // 로그인 기능과 연결
+                onPressed: () {
+                  String id = _idController.text;
+                  String password = _passwordController.text;
+                  print('ID: $id, Password: $password');
+                  Navigator.pushNamed(context, '/mainPage');
+                },
                 child: Text(
                   "Login",
                   style: TextStyle(
@@ -146,8 +185,6 @@ class _SignIn extends State<SignIn> {
                 ),
               ),
             ),
-
-            // Text - 회원가입으로 이동
             Container(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -155,8 +192,7 @@ class _SignIn extends State<SignIn> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: Padding(
-                      padding: EdgeInsets.only(
-                          top: 20, left: 20, right: 30),
+                      padding: EdgeInsets.only(top: 20, left: 20, right: 65),
                       child: Text(
                         "계정이 없으신가요?",
                         style: TextStyle(
@@ -166,13 +202,15 @@ class _SignIn extends State<SignIn> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(left: 20, right: 20, bottom: 10),
-                    child: TextButton(
-                      onPressed: () {},
+                    padding: EdgeInsets.only(left: 20, right: 65),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, '/signUp');
+                      },
                       child: Text(
                         "회원가입  ->",
                         style: TextStyle(
-                          color: Colors.black,
+                          color: Colors.blueAccent[700],
                           fontSize: 16,
                         ),
                       ),
@@ -180,7 +218,7 @@ class _SignIn extends State<SignIn> {
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),

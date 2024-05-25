@@ -27,14 +27,22 @@ class _TripListYearState extends State<TripListYear> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Center(
-              child: GradientText(
-                'TRIMO',
-                gradient: LinearGradient(
-                  colors: [Color(0xFF002FFF), Color(0xFF000000)],
-                ),
-                style: const TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
+              child: Container(
+                margin: EdgeInsets.only(top: 14, bottom: 15.0),
+                child: ShaderMask(
+                  shaderCallback: (bounds) => LinearGradient(
+                    colors: [Colors.blueAccent, Colors.black],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ).createShader(bounds),
+                  child: Text(
+                    'TRIMO',
+                    style: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                    ),
+                  ),
                 ),
               ),
             ),
