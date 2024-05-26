@@ -20,11 +20,8 @@ class TrimoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
       home: MainPage(),
       routes: {
         '/newPage': (context) => NewPage(),
@@ -105,7 +102,7 @@ class _MainPageState extends State<MainPage> {
                     children: [
                       GestureDetector(
                           onTap: () {
-                            Navigator.pushNamed(context, '/newPage'); // 최근 여행 페이지 이동
+                            Navigator.pushNamed(context, '/showTrip'); // 최근 여행 페이지 이동
                           },
                           child: Stack(children: <Widget>[
                             ClipRRect(
