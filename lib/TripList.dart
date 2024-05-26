@@ -11,7 +11,7 @@ class TripList extends StatefulWidget {
 class _TripListState extends State<TripList> {
   // 여행 데이터를 저장할 리스트 => date는 datetime 형태 그대로 받아와도 될라나
   final List<Map<String, String>> trips = [
-    {'title': '친구들과 부산여행', 'location': '부산', 'date': '05.10~05.13', 'imagePath': 'images/busanTest.jpeg'}
+    {'title': '친구들과 부산여행', 'location': '부산', 'date': '05.10~05.13', 'imagePath': 'assets/busanTest.jpeg'}
   ];
 
   // 카드를 추가하는 함수
@@ -21,7 +21,7 @@ class _TripListState extends State<TripList> {
         'title': '새로운 여행',
         'location': '새로운 장소',
         'date': '새로운 날짜',
-        'imagePath': 'images/busanTest.jpeg',
+        'imagePath': 'assets/busanTest.jpeg',
       });
     });
   }
@@ -38,14 +38,22 @@ class _TripListState extends State<TripList> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                GradientText(
-                  'TRIMO',
-                  gradient: LinearGradient(
-                    colors: [Color(0xFF002FFF), Color(0xFF000000)],
-                  ),
-                  style: TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
+                Container(
+                  margin: EdgeInsets.only(top: 30.0, bottom: 15.0),
+                  child: ShaderMask(
+                    shaderCallback: (bounds) => LinearGradient(
+                      colors: [Colors.blueAccent, Colors.black],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ).createShader(bounds),
+                    child: Text(
+                      'TRIMO',
+                      style: TextStyle(
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue,
+                      ),
+                    ),
                   ),
                 ),
               ],

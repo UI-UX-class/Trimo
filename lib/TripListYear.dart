@@ -10,9 +10,9 @@ class TripListYear extends StatefulWidget {
 
 class _TripListYearState extends State<TripListYear> {
   final List<Map<String, String>> trips = [
-    {'year': '2024', 'imagePath': 'images/busanTest.jpeg'},
-    {'year': '2023', 'imagePath': 'images/busanTest.jpeg'},
-    {'year': '2022', 'imagePath': 'images/busanTest.jpeg'},
+    {'year': '2024', 'imagePath': 'assets/busanTest.jpeg'},
+    {'year': '2023', 'imagePath': 'assets/busanTest.jpeg'},
+    {'year': '2022', 'imagePath': 'assets/busanTest.jpeg'},
   ];
 
   @override
@@ -27,14 +27,22 @@ class _TripListYearState extends State<TripListYear> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Center(
-              child: GradientText(
-                'TRIMO',
-                gradient: LinearGradient(
-                  colors: [Color(0xFF002FFF), Color(0xFF000000)],
-                ),
-                style: const TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
+              child: Container(
+                margin: EdgeInsets.only(top: 14, bottom: 15.0),
+                child: ShaderMask(
+                  shaderCallback: (bounds) => LinearGradient(
+                    colors: [Colors.blueAccent, Colors.black],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ).createShader(bounds),
+                  child: Text(
+                    'TRIMO',
+                    style: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -82,7 +90,7 @@ class _TripListYearState extends State<TripListYear> {
           setState(() {
             trips.add({
               'year': '2025',
-              'imagePath': 'images/testimg.jpeg',
+              'imagePath': 'assets/testimg.jpeg',
             });
           });
         },

@@ -1,29 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:trimo/SignIn.dart';
+import './MyPage.dart';
 
 // Test Main
 void main() {
-  runApp(SignUpTest());
+  runApp(ChangeInfo());
 }
 
 // Stateless Widget
-class SignUpTest extends StatelessWidget {
+class ChangeInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return SignUp();
+    return MaterialApp(
+      title: 'SignUp',
+      home: _ChangeInfo(),
+      routes: {
+        '/myPage': (context) => MyPage(),// 메인 페이지 경로 추가
+      },
+    );
   }
 }
 
 // StatefulWidget
-class SignUp extends StatefulWidget {
+class _ChangeInfo extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _SignUp();
+    return ChangeInfoState();
   }
 }
 
 // Design
-class _SignUp extends State<SignUp> {
+class ChangeInfoState extends State<_ChangeInfo> {
   late ScrollController _scrollController;
   int _selectedAvatarIndex = -1; // 선택된 이미지의 인덱스를 저장
   String _selectedAvatarPath = '';
@@ -52,13 +59,14 @@ class _SignUp extends State<SignUp> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Container(
-                margin: EdgeInsets.only(top: 30.0, bottom: 20.0),
+                margin: EdgeInsets.only(top: 30.0),
                 child: ShaderMask(
-                  shaderCallback: (bounds) => LinearGradient(
-                    colors: [Colors.blueAccent, Colors.black],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ).createShader(bounds),
+                  shaderCallback: (bounds) =>
+                      LinearGradient(
+                        colors: [Colors.blueAccent, Colors.black],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ).createShader(bounds),
                   child: Text(
                     'TRIMO',
                     style: TextStyle(
@@ -69,10 +77,19 @@ class _SignUp extends State<SignUp> {
                   ),
                 ),
               ),
+              SizedBox(
+                width: 290,
+                child:Text('회원정보수정',
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey[850],
+                  ),),),
               // TextField 칸
               Padding(
                 padding:
-                    EdgeInsets.only(left: 60, right: 60, bottom: 20),
+                EdgeInsets.only(left: 60, right: 60, bottom: 20),
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
@@ -84,7 +101,7 @@ class _SignUp extends State<SignUp> {
                         alignment: Alignment.centerLeft,
                         child: Padding(
                           padding:
-                              EdgeInsets.only(top: 20, left: 20, bottom: 10),
+                          EdgeInsets.only(top: 20, left: 20, bottom: 10),
                           child: Text(
                             '닉네임',
                             style: TextStyle(
@@ -96,7 +113,8 @@ class _SignUp extends State<SignUp> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(left: 15, right: 15, bottom: 20),
+                        padding: EdgeInsets.only(
+                            left: 15, right: 15, bottom: 20),
                         child: Container(
                           //color: Colors.white,
                           decoration: BoxDecoration(
@@ -108,13 +126,13 @@ class _SignUp extends State<SignUp> {
                             width: 270,
                             child: TextField(
                               controller: _nicknameController,
-                            decoration: InputDecoration(
-                              hintText: 'Nick Name',
-                              contentPadding: EdgeInsets.all(8),
+                              decoration: InputDecoration(
+                                hintText: 'Nick Name',
+                                contentPadding: EdgeInsets.all(8),
+                              ),
                             ),
                           ),
-                        ),
-                      ),),
+                        ),),
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Padding(
@@ -130,7 +148,8 @@ class _SignUp extends State<SignUp> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(left: 15, right: 15, bottom: 20),
+                        padding: EdgeInsets.only(
+                            left: 15, right: 15, bottom: 20),
                         child: Container(
                           //color: Colors.white,
                           decoration: BoxDecoration(
@@ -140,15 +159,15 @@ class _SignUp extends State<SignUp> {
                           child: SizedBox(
                             height: 30,
                             width: 270,
-                            child:TextField(
+                            child: TextField(
                               controller: _idController,
-                            decoration: InputDecoration(
-                              hintText: 'ID',
-                              contentPadding: EdgeInsets.all(8),
+                              decoration: InputDecoration(
+                                hintText: 'ID',
+                                contentPadding: EdgeInsets.all(8),
+                              ),
                             ),
                           ),
-                        ),
-                      ),),
+                        ),),
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Padding(
@@ -165,7 +184,7 @@ class _SignUp extends State<SignUp> {
                       ),
                       Padding(
                         padding:
-                            EdgeInsets.only(left: 15, right: 15, bottom: 20),
+                        EdgeInsets.only(left: 15, right: 15, bottom: 20),
                         child: Container(
                           //color: Colors.white,
                           decoration: BoxDecoration(
@@ -177,13 +196,13 @@ class _SignUp extends State<SignUp> {
                             width: 270,
                             child: TextField(
                               controller: _passwordController,
-                            decoration: InputDecoration(
-                              hintText: 'Password',
-                              contentPadding: EdgeInsets.all(8),
+                              decoration: InputDecoration(
+                                hintText: 'Password',
+                                contentPadding: EdgeInsets.all(8),
+                              ),
                             ),
                           ),
-                        ),
-                      ),),
+                        ),),
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Padding(
@@ -200,7 +219,7 @@ class _SignUp extends State<SignUp> {
                       ),
                       Padding(
                         padding:
-                            EdgeInsets.only(left: 15, right: 15, bottom: 20),
+                        EdgeInsets.only(left: 15, right: 15, bottom: 20),
                         child: Container(
                           //color: Colors.white,
                           decoration: BoxDecoration(
@@ -212,13 +231,13 @@ class _SignUp extends State<SignUp> {
                             width: 270,
                             child: TextField(
                               controller: _emailController,
-                            decoration: InputDecoration(
-                              hintText: 'Email',
-                              contentPadding: EdgeInsets.all(8),
+                              decoration: InputDecoration(
+                                hintText: 'Email',
+                                contentPadding: EdgeInsets.all(8),
+                              ),
                             ),
                           ),
-                        ),
-                      ),),
+                        ),),
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Padding(
@@ -277,10 +296,10 @@ class _SignUp extends State<SignUp> {
                     String id = _idController.text;
                     String password = _passwordController.text;
                     String email = _emailController.text;
-                    Navigator.pushNamed(context, '/mainPage');
+                    Navigator.pushNamed(context, '/myPage');
                   }, // 로그인 기능과 연결
                   child: Text(
-                    "Join",
+                    "Edit",
                     style: TextStyle(
                       color: Colors.white,
                       letterSpacing: 2.0,
@@ -299,30 +318,18 @@ class _SignUp extends State<SignUp> {
                       child: Padding(
                         padding:
                         EdgeInsets.only(top: 20, left: 20, right: 65),
-                        child: Text(
-                          "계정이 이미 있으신가요?",
-                          style: TextStyle(
-                            fontSize: 16,
-                          ),
-                        ),
+                        child: Text("",),
                       ),
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 20, right: 65, bottom: 10),
                       child: TextButton(
                         onPressed: () {
-                          Navigator.pushNamed(context, '/signIn');
                         },
-                        child: Text(
-                          "로그인  ->",
-                          style: TextStyle(
-                            color: Colors.blueAccent[700],
-                            fontSize: 16,
-                          ),
+                        child: Text(""),
                         ),
                       ),
-                    ),
-                  ],
+                    ]
                 ),
               )
             ],
