@@ -11,7 +11,7 @@ class WriteTrip extends StatefulWidget {
 
 class _WriteTripState extends State<WriteTrip> {
   final picker = ImagePicker();
-  List<XFile?> images = []; // 가져온 사진들을 보여주기 위한 변수
+
 
   @override
   Widget build(BuildContext context) {
