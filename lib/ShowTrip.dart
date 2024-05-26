@@ -30,13 +30,16 @@ class _ShowTripState extends State<ShowTrip> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text(' '),
+      ),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Center(
               child: Container(
-                margin: EdgeInsets.only(top: 90.0, bottom: 10.0),
+                margin: EdgeInsets.only(top: 30.0, bottom: 10.0),
                 child: ShaderMask(
                   shaderCallback: (bounds) => LinearGradient(
                     colors: [Colors.blueAccent, Colors.black],
