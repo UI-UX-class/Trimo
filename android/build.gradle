@@ -16,7 +16,15 @@ subprojects {
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
+<<<<<<< HEAD
 task runNodeScript(type: Exec) {
     workingDir './'
     commandLine 'node', 'your_script.js'
 }
+=======
+
+task runNodeScript(type: Exec) {
+    workingDir './'
+    commandLine 'node', 'your_script.js'
+}
+>>>>>>> a084f0f84382e9e0d247d2d7c7b3866d14977354
