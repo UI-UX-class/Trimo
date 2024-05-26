@@ -10,13 +10,7 @@ void main() {
 class SignUpTest extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'SignUp',
-      home: SignUp(),
-      routes: {
-        '/signIn': (context) => SignInTest(),// 메인 페이지 경로 추가
-      },
-    );
+    return SignUp();
   }
 }
 
@@ -47,7 +41,7 @@ class _SignUp extends State<SignUp> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pushNamed(context, '/signIn'); // 메인 페이지로 이동
+            Navigator.pop(context);
           },
         ),
         title: const Text(''),

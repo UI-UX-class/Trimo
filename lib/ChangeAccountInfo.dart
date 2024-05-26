@@ -48,7 +48,7 @@ class ChangeInfoState extends State<_ChangeInfo> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pushNamed(context, '/myPage'); // 마이페이지로 이동
+            Navigator.pop(context);
           },
         ),
         title: const Text(''),
