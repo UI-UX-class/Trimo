@@ -33,7 +33,7 @@ class _SignIn extends State<SignIn> {
         title: const Text(' '),
       ),
       resizeToAvoidBottomInset: false,
-      body: SafeArea(
+      body: Center(
         child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
@@ -57,7 +57,7 @@ class _SignIn extends State<SignIn> {
               ),
               Center(
                   child: SizedBox(
-                      width: 330,
+                      width: 300,
                       child: Column(children: [
                         Container(
                           child: Stack(
@@ -68,7 +68,7 @@ class _SignIn extends State<SignIn> {
                                   Image.asset(
                                     'assets/login_back.png',
                                     height: 220,
-                                    width: 290,
+                                    width: 300,
                                     fit: BoxFit.fill,
                                   ),
                                 ]),
@@ -154,8 +154,11 @@ class _SignIn extends State<SignIn> {
                             ],
                           ),
                         ),
+                        SizedBox(
+                          height: 10,
+                        ),
                         Container(
-                          width: 290,
+                          width: 300,
                           height: 50,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
@@ -191,7 +194,7 @@ class _SignIn extends State<SignIn> {
                                 alignment: Alignment.centerRight,
                                 child: Padding(
                                   padding: EdgeInsets.only(
-                                      top: 20, left: 20, right: 65),
+                                      top: 20, left: 20, right: 5),
                                   child: Text(
                                     "계정이 없으신가요?",
                                     style: TextStyle(
@@ -201,7 +204,7 @@ class _SignIn extends State<SignIn> {
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsets.only(left: 20, right: 65),
+                                padding: EdgeInsets.only(left: 20, right: 5),
                                 child: GestureDetector(
                                   onTap: () {
                                     Navigator.pushNamed(context, '/signUpPage');

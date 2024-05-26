@@ -31,6 +31,8 @@ class _ShowTripState extends State<ShowTrip> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        scrolledUnderElevation: 0,
         title: const Text(' '),
       ),
       body: SafeArea(

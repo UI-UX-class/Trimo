@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trimo/SignIn.dart';
-import './MyPage.dart';
 
 // Test Main
 void main() {
@@ -11,13 +10,7 @@ void main() {
 class ChangeInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'SignUp',
-      home: _ChangeInfo(),
-      routes: {
-        '/myPage': (context) => MyPage(),// 메인 페이지 경로 추가
-      },
-    );
+    return _ChangeInfo();
   }
 }
 
@@ -54,19 +47,17 @@ class ChangeInfoState extends State<_ChangeInfo> {
         title: const Text(''),
       ),
       body: Center(
-        child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Container(
-                margin: EdgeInsets.only(top: 30.0),
+                margin: EdgeInsets.only(top: 30.0, bottom: 20.0),
                 child: ShaderMask(
-                  shaderCallback: (bounds) =>
-                      LinearGradient(
-                        colors: [Colors.blueAccent, Colors.black],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ).createShader(bounds),
+                  shaderCallback: (bounds) => LinearGradient(
+                    colors: [Colors.blueAccent, Colors.black],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ).createShader(bounds),
                   child: Text(
                     'TRIMO',
                     style: TextStyle(
@@ -82,14 +73,16 @@ class ChangeInfoState extends State<_ChangeInfo> {
                 child:Text('회원정보수정',
                   textAlign: TextAlign.left,
                   style: TextStyle(
-                    fontSize: 15,
+                    fontSize: 17,
                     fontWeight: FontWeight.w600,
                     color: Colors.grey[850],
                   ),),),
+              SizedBox(
+                height: 3,
+              ),
               // TextField 칸
-              Padding(
-                padding:
-                EdgeInsets.only(left: 60, right: 60, bottom: 20),
+              SizedBox(
+                width: 300,
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
@@ -113,8 +106,7 @@ class ChangeInfoState extends State<_ChangeInfo> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(
-                            left: 15, right: 15, bottom: 20),
+                        padding: EdgeInsets.only(left: 15, right: 15, bottom: 20),
                         child: Container(
                           //color: Colors.white,
                           decoration: BoxDecoration(
@@ -125,10 +117,12 @@ class ChangeInfoState extends State<_ChangeInfo> {
                             height: 30,
                             width: 270,
                             child: TextField(
+                              textAlignVertical: TextAlignVertical(y: 0.0),
                               controller: _nicknameController,
                               decoration: InputDecoration(
                                 hintText: 'Nick Name',
                                 contentPadding: EdgeInsets.all(8),
+                                border: InputBorder.none,
                               ),
                             ),
                           ),
@@ -148,8 +142,7 @@ class ChangeInfoState extends State<_ChangeInfo> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(
-                            left: 15, right: 15, bottom: 20),
+                        padding: EdgeInsets.only(left: 15, right: 15, bottom: 20),
                         child: Container(
                           //color: Colors.white,
                           decoration: BoxDecoration(
@@ -159,11 +152,12 @@ class ChangeInfoState extends State<_ChangeInfo> {
                           child: SizedBox(
                             height: 30,
                             width: 270,
-                            child: TextField(
+                            child:TextField(
                               controller: _idController,
                               decoration: InputDecoration(
                                 hintText: 'ID',
                                 contentPadding: EdgeInsets.all(8),
+                                border: InputBorder.none,
                               ),
                             ),
                           ),
@@ -199,6 +193,7 @@ class ChangeInfoState extends State<_ChangeInfo> {
                               decoration: InputDecoration(
                                 hintText: 'Password',
                                 contentPadding: EdgeInsets.all(8),
+                                border: InputBorder.none,
                               ),
                             ),
                           ),
@@ -234,6 +229,7 @@ class ChangeInfoState extends State<_ChangeInfo> {
                               decoration: InputDecoration(
                                 hintText: 'Email',
                                 contentPadding: EdgeInsets.all(8),
+                                border: InputBorder.none,
                               ),
                             ),
                           ),
@@ -277,9 +273,12 @@ class ChangeInfoState extends State<_ChangeInfo> {
                   ),
                 ),
               ),
+              SizedBox(
+                height: 10,
+              ),
               // Login Button
               Container(
-                width: 290,
+                width: 300,
                 height: 50,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
@@ -296,7 +295,7 @@ class ChangeInfoState extends State<_ChangeInfo> {
                     String id = _idController.text;
                     String password = _passwordController.text;
                     String email = _emailController.text;
-                    Navigator.pushNamed(context, '/myPage');
+                    Navigator.pushNamed(context, '/mainPage');
                   }, // 로그인 기능과 연결
                   child: Text(
                     "Edit",
@@ -309,33 +308,9 @@ class ChangeInfoState extends State<_ChangeInfo> {
                 ),
               ),
               // Text - 회원가입으로 이동
-              Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Padding(
-                        padding:
-                        EdgeInsets.only(top: 20, left: 20, right: 65),
-                        child: Text("",),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 20, right: 65, bottom: 10),
-                      child: TextButton(
-                        onPressed: () {
-                        },
-                        child: Text(""),
-                        ),
-                      ),
-                    ]
-                ),
-              )
-            ],
+              ],
           ),
         ),
-      ),
     );
   }
 

@@ -19,6 +19,8 @@ class _TripListYearState extends State<TripListYear> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        scrolledUnderElevation: 0,
         title: const Text(''),
       ),
       body: Padding(

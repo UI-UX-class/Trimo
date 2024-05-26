@@ -25,6 +25,8 @@ class TrimoApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
         useMaterial3: true,
       ),
+      debugShowCheckedModeBanner: false,
+      title: 'Trimo',
       home: MainPage(),
       routes: {
         '/newPage': (context) => NewPage(),
@@ -105,7 +107,7 @@ class _MainPageState extends State<MainPage> {
                     children: [
                       GestureDetector(
                           onTap: () {
-                            Navigator.pushNamed(context, '/newPage'); // 최근 여행 페이지 이동
+                            Navigator.pushNamed(context, '/showTrip'); // 최근 여행 페이지 이동
                           },
                           child: Stack(children: <Widget>[
                             ClipRRect(
@@ -118,13 +120,13 @@ class _MainPageState extends State<MainPage> {
                                   ),
                                 ])),
                             Positioned(
-                              bottom: 25,
+                              bottom: 26,
                               left: 25,
                               child: Text(
                                 '부산',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  fontSize: 27,
+                                  fontSize: 28,
                                   color: Colors.white,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -137,7 +139,7 @@ class _MainPageState extends State<MainPage> {
                                 '05.10 ~ 05.13',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  fontSize: 19,
+                                  fontSize: 20,
                                   color: Colors.white,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -182,7 +184,7 @@ class _MainPageState extends State<MainPage> {
                                       '새로운 여행',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        fontSize: 11,
+                                        fontSize: 12,
                                         color: Colors.white,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -211,7 +213,7 @@ class _MainPageState extends State<MainPage> {
                                       '로그인',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        fontSize: 11,
+                                        fontSize: 12,
                                         color: Colors.white,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -271,7 +273,7 @@ class _MainPageState extends State<MainPage> {
                                   '마이페이지',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    fontSize: 11,
+                                    fontSize: 12,
                                     color: Colors.white,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -296,7 +298,7 @@ class _MainPageState extends State<MainPage> {
                                       '전체 여행 일지',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        fontSize: 11,
+                                        fontSize: 12,
                                         color: Colors.white,
                                         fontWeight: FontWeight.w600,
                                       ),

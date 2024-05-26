@@ -47,7 +47,6 @@ class _SignUp extends State<SignUp> {
         title: const Text(''),
       ),
       body: Center(
-        child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
@@ -69,10 +68,21 @@ class _SignUp extends State<SignUp> {
                   ),
                 ),
               ),
+              SizedBox(
+                width: 290,
+                child:Text('회원가입',
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey[850],
+                  ),),),
+              SizedBox(
+                height: 3,
+              ),
               // TextField 칸
-              Padding(
-                padding:
-                    EdgeInsets.only(left: 60, right: 60, bottom: 20),
+              SizedBox(
+                width: 300,
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
@@ -107,10 +117,12 @@ class _SignUp extends State<SignUp> {
                             height: 30,
                             width: 270,
                             child: TextField(
+                              textAlignVertical: TextAlignVertical(y: 0.0),
                               controller: _nicknameController,
                             decoration: InputDecoration(
                               hintText: 'Nick Name',
                               contentPadding: EdgeInsets.all(8),
+                              border: InputBorder.none,
                             ),
                           ),
                         ),
@@ -145,6 +157,7 @@ class _SignUp extends State<SignUp> {
                             decoration: InputDecoration(
                               hintText: 'ID',
                               contentPadding: EdgeInsets.all(8),
+                              border: InputBorder.none,
                             ),
                           ),
                         ),
@@ -180,6 +193,7 @@ class _SignUp extends State<SignUp> {
                             decoration: InputDecoration(
                               hintText: 'Password',
                               contentPadding: EdgeInsets.all(8),
+                              border: InputBorder.none,
                             ),
                           ),
                         ),
@@ -215,6 +229,7 @@ class _SignUp extends State<SignUp> {
                             decoration: InputDecoration(
                               hintText: 'Email',
                               contentPadding: EdgeInsets.all(8),
+                              border: InputBorder.none,
                             ),
                           ),
                         ),
@@ -258,9 +273,12 @@ class _SignUp extends State<SignUp> {
                   ),
                 ),
               ),
+              SizedBox(
+                height: 10,
+              ),
               // Login Button
               Container(
-                width: 290,
+                width: 300,
                 height: 50,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
@@ -290,45 +308,10 @@ class _SignUp extends State<SignUp> {
                 ),
               ),
               // Text - 회원가입으로 이동
-              Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Padding(
-                        padding:
-                        EdgeInsets.only(top: 20, left: 20, right: 65),
-                        child: Text(
-                          "계정이 이미 있으신가요?",
-                          style: TextStyle(
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 20, right: 65, bottom: 10),
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/signIn');
-                        },
-                        child: Text(
-                          "로그인  ->",
-                          style: TextStyle(
-                            color: Colors.blueAccent[700],
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            ],
+              ],
           ),
         ),
-      ),
+
     );
   }
 
