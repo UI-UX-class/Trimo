@@ -10,9 +10,9 @@ class TripListYear extends StatefulWidget {
 
 class _TripListYearState extends State<TripListYear> {
   final List<Map<String, String>> trips = [
-    {'year': '2024', 'imagePath': 'assets/busanTest.jpeg'},
-    {'year': '2023', 'imagePath': 'assets/busanTest.jpeg'},
-    {'year': '2022', 'imagePath': 'assets/busanTest.jpeg'},
+    {'year': '2024', 'imagePath': 'assets/avatar1.png'},
+    {'year': '2023', 'imagePath': 'assets/avatar2.png'},
+    {'year': '2022', 'imagePath': 'assets/avatar3.png'},
   ];
 
   @override
@@ -90,7 +90,7 @@ class _TripListYearState extends State<TripListYear> {
           setState(() {
             trips.add({
               'year': '2025',
-              'imagePath': 'assets/testimg.jpeg',
+              'imagePath': 'assets/avatar1.jpeg',
             });
           });
         },

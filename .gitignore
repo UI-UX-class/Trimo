@@ -33,7 +33,7 @@ doc/api/
 ### Dart Patch ###
 # dotenv environment variables file
 .env
-
+.idea/
 ### Flutter ###
 # Flutter/Dart/Pub related
 **/doc/api/
