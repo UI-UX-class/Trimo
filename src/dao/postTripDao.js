@@ -4,7 +4,6 @@ async function postTrip(data) { // 여기서 'req' 대신 'data' 사용
     console.log("Dao In");
     return new Promise((resolve, reject) => {
         const { user_id, title, contents, country, domestic, start_date, end_date, time, image_first, image_second, trip_place } = data;
-
         const details = {
             trip_place: trip_place // 사용자 입력값
         };

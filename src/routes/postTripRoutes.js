@@ -6,8 +6,6 @@ const postTripService = require("../service/postTripService")
 router.post("/", async (req,res) => {
     console.log("Routes In1");
     try{
-//        const user_id = req.session.user_id;
-//        const postTrip_req = {...req.body, user_id};
         console.log("Routes Out1");
         const result = await postTripService.postTrip(req.body);
         res.status(201).json(result);

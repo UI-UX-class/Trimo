@@ -31,8 +31,6 @@ async function tripListYear(req){
     }
 }
 
-
-
 module.exports = {
     tripListYear,
 }

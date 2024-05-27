@@ -1,9 +1,9 @@
 const db = require("../config/db.js");
 
-async function showTripListYear(req) {
+async function showTripListYear(req){
     console.log("Dao In");
     return new Promise((resolve, reject) => {
-        var queryData = `SELECT title, country, start_date, end_date, image_first FROM travel WHERE YEAR(start_date) = ${req.year} AND user_id = ${req.user_id}`;
+        var queryData = `SELECT travel_id,title, country, start_date, end_date, image_first FROM travel WHERE YEAR(start_date) = ${req.year} AND user_id = ${req.user_id}`;
         db.query(queryData, (error, db_data) => {
             if(error) {
                 logger.error(
@@ -18,8 +18,6 @@ async function showTripListYear(req) {
         })
     })
 }
-
-
 
 module.exports = {
     showTripListYear,
