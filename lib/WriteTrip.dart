@@ -33,6 +33,8 @@ class _WriteTripState extends State<WriteTrip> {
   final picker = ImagePicker();
   File? _image1;
   File? _image2; // 가져온 사진들을 보여주기 위한 변수
+  late final String _image1base;
+  late final String _image2base;
 
   @override
   void initState() {
@@ -85,6 +87,16 @@ class _WriteTripState extends State<WriteTrip> {
         print("No Image Picked");
       }
     });
+
+    final bytes = await pickedFile!.readAsBytes();
+    final imageBase64 = base64Encode(bytes);
+    setState(() {
+      if (index == 1) {
+        _image1base = imageBase64;
+      } else {
+        _image2base = imageBase64;
+      }
+    });
   }
 
   // 여행 정보 저장 함수
@@ -98,18 +110,17 @@ class _WriteTripState extends State<WriteTrip> {
       daysDifference: _daysDifference,
       tripPlace: _tripPlace,
       tripDiary: _tripDiaryController.text,
-      tripImage1: _image1 ?? File(''), // null일 경우 기본값 사용
-      tripImage2: _image2 ?? File(''), // null일 경우 기본값 사용
+      tripImage1: _image1base,
+      tripImage2: _image2base,
     );
 
     try {
-      String jsonString = jsonEncode(newTrip);
+      final jsonString = jsonEncode(newTrip.toJson());
       var response = await http.post(
-        Uri.parse('http://your-api-url.com/endpoint'),
+        Uri.parse("http://localhost:3000/newnote"),
         headers: {"Content-Type": "application/json"},
         body: jsonString,
       );
-
       if (response.statusCode == 200) {
         print('데이터 저장 성공');
         Navigator.pushReplacementNamed(context, '/showTrip');
@@ -121,8 +132,6 @@ class _WriteTripState extends State<WriteTrip> {
       print('오류 발생: $e');
     }
   }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -424,8 +433,7 @@ class _WriteTripState extends State<WriteTrip> {
                 margin: EdgeInsets.only(top: 40, bottom: 20),
                 child: InkWell(
                   onTap: () {
-                    // _saveTrip();
-                    Navigator.pushReplacementNamed(context, '/showTrip');
+                    _saveTrip();
                   }, // 저장 함수 호출
                   child: Container(
                     padding: EdgeInsets.symmetric(vertical: 15),
