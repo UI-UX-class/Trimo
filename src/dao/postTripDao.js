@@ -9,9 +9,10 @@ async function postTrip(data) { // 여기서 'req' 대신 'data' 사용
         };
 
         const detailsJSON = JSON.stringify(details);
+        const currentTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
         var queryData = `INSERT INTO travel (user_id, title, contents, country, domestic, start_date, end_date, time, image_first, image_second, trip_place)
-                         VALUES (${user_id}, '${title}', '${contents}', '${country}', ${domestic ? 1 : 0}, '${start_date}', '${end_date}', '${time}', '${image_first}', '${image_second}', '${detailsJSON}')`;
+                         VALUES (${user_id}, '${title}', '${contents}', '${country}', ${domestic ? 1 : 0}, '${start_date}', '${end_date}', '${currentTime}', '${image_first}', '${image_second}', '${detailsJSON}')`;
 
         db.query(queryData, (error, db_data) => {
             if (error) {

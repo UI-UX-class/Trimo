@@ -1,13 +1,15 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import './trip.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import "./trip.dart";
 
 class ShowTrip extends StatefulWidget {
-  const ShowTrip({super.key});
+  final int tripId;
+
+  ShowTrip({required this.tripId});
 
   @override
-  State<ShowTrip> createState() => _ShowTripState();
+  _ShowTripState createState() => _ShowTripState();
 }
 
 class _ShowTripState extends State<ShowTrip> {
@@ -27,6 +29,46 @@ class _ShowTripState extends State<ShowTrip> {
     tripImage2: '/data/user/0/com.example.trimo_write/cache/scaled_1000008055.jpg',
   );
 
+  Map<String, dynamic>? tripData;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchTripData();
+  }
+
+  Future<void> _fetchTripData() async {
+    final url = 'http://10.0.2.2:3000/getnote/${widget.tripId}';
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final responseBody = jsonDecode(response.body);
+      setState(() {
+        tripData = responseBody['Data'];
+        trip.tripName = tripData!['title'];
+        trip.tripWhere = tripData!['country'];
+        trip.tripDiary = tripData!['contents'];
+        var year = int.parse(tripData!['start_date'].substring(0,4));
+        var month = int.parse(tripData!['start_date'].substring(5,7));
+        var day = int.parse(tripData!['start_date'].substring(8,10));
+        trip.tripWhenStart = DateTime(year, month, day);
+        var year_e = int.parse(tripData!['end_date'].substring(0,4));
+        var month_e = int.parse(tripData!['end_date'].substring(5,7));
+        var day_e = int.parse(tripData!['end_date'].substring(8,10));
+        trip.tripWhenEnd = DateTime(year_e,month_e,day_e);
+        var length = tripData!['trip_place'].length;
+        print(tripData!['trip_place']["1"][0].runtimeType);
+        print("hello");
+        trip.tripPlace = {};
+        tripData!['trip_place'].forEach((key, value){
+          trip.tripPlace[int.parse(key)] = List<String>.from(value);
+        });
+      });
+    } else {
+      print('Failed to load trip data');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +77,9 @@ class _ShowTripState extends State<ShowTrip> {
         scrolledUnderElevation: 0,
         title: const Text(' '),
       ),
-      body: SafeArea(
+      body: tripData == null
+          ? Center(child: CircularProgressIndicator())
+          : SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
