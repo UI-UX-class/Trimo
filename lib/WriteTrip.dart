@@ -1,8 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
+import 'package:http/http.dart' as http;
 import './trip.dart';
 
 enum Location {
@@ -47,7 +48,7 @@ class _WriteTripState extends State<WriteTrip> {
   // 일차 추가 함수
   void addData(int index) {
     setState(() {
-      _tripPlace[index] = ["출발", "도착"];
+      _tripPlace[index] = ["", ""];
     });
   }
 
@@ -87,7 +88,7 @@ class _WriteTripState extends State<WriteTrip> {
   }
 
   // 여행 정보 저장 함수
-  void _saveTrip() {
+  Future<void> _saveTrip() async {
     final newTrip = Trip(
       tripName: _tripNameController.text,
       tripWhere: _tripWhereController.text,
@@ -101,10 +102,25 @@ class _WriteTripState extends State<WriteTrip> {
       tripImage2: _image2 ?? File(''), // null일 경우 기본값 사용
     );
 
-    print("저장된 여행 정보: ${newTrip.tripImage1}");
-    print("저장된 여행 정보: ${newTrip.tripImage2}");
-    // 여행 정보 저장 후 필요한 곳에서 사용
-    Navigator.pushReplacementNamed(context, '/showTrip');
+    try {
+      String jsonString = jsonEncode(newTrip);
+      var response = await http.post(
+        Uri.parse('http://your-api-url.com/endpoint'),
+        headers: {"Content-Type": "application/json"},
+        body: jsonString,
+      );
+
+      if (response.statusCode == 200) {
+        print('데이터 저장 성공');
+        Navigator.pushReplacementNamed(context, '/showTrip');
+      } else {
+        print('데이터 저장 실패: ${response.statusCode}');
+        print('응답 내용: ${response.body}');
+      }
+    } catch (e) {
+      print('오류 발생: $e');
+    }
+  }
   }
 
   @override
