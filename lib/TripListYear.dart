@@ -10,15 +10,17 @@ class TripListYear extends StatefulWidget {
 
 class _TripListYearState extends State<TripListYear> {
   final List<Map<String, String>> trips = [
-    {'year': '2024', 'imagePath': 'assets/avatar1.png'},
-    {'year': '2023', 'imagePath': 'assets/avatar2.png'},
-    {'year': '2022', 'imagePath': 'assets/avatar3.png'},
+    {'year': '2024', 'imagePath': 'assets/busanTest.jpg'},
+    {'year': '2023', 'imagePath': 'assets/busanTest.jpg'},
+    {'year': '2022', 'imagePath': 'assets/busanTest.jpg'},
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        scrolledUnderElevation: 0,
         title: const Text(''),
       ),
       body: Padding(
@@ -47,23 +49,25 @@ class _TripListYearState extends State<TripListYear> {
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              '여행 일지',
-              style: TextStyle(
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
+            Container(
+              margin: EdgeInsets.only(left: 25, bottom: 20),
+              child: Text(
+                '여행 일지',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-            const SizedBox(height: 16),
             Expanded(
               child: ListView.builder(
                 itemCount: trips.length,
                 itemBuilder: (context, index) {
                   final trip = trips[index];
                   return Transform.translate(
-                    offset: Offset(index % 2 == 0 ? -20.0 : 20.0, 0),
+                    offset: Offset(index % 2 == 0 ? -40.0 : 40.0, 0),
                     child: Transform.rotate(
-                      angle: index % 2 == 0 ? -0.05 : 0.05,
+                      angle: index % 2 == 0 ? -0.02 : 0.02,
                       child: GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -71,10 +75,65 @@ class _TripListYearState extends State<TripListYear> {
                             MaterialPageRoute(builder: (context) => TripList()),
                           );
                         },
-                        child: TripCard(
-                          year: trip['year']!,
-                          imagePath: trip['imagePath']!,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Container(
+                              width: 200,
+                              height: 200,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(
+                                  color: Colors.black, // 테두리 색상 설정
+                                  width: 1.0, // 테두리 두께 설정
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.5), // 그림자 색상
+                                    spreadRadius: 1, // 그림자 확산 반경
+                                    blurRadius: 6, // 그림자 흐림 정도
+                                    offset: Offset(0, 5), // 그림자 위치
+                                  ),
+                                ],
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.all(10),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      height: 145,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: AssetImage("${trip['imagePath']}"), // 배경 이미지 설정
+                                          fit: BoxFit.cover, // 이미지 크기 조정
+                                        ),
+                                      ),
+                                    ),
+                                    ShaderMask(
+                                      shaderCallback: (bounds) => LinearGradient(
+                                        colors: [Colors.blueAccent, Colors.black],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      ).createShader(bounds),
+                                      child: Text("${trip['year']}",
+                                        style: TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.blue,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                              
+                            ),
+                          ),
                         ),
+
                       ),
                     ),
                   );
@@ -84,86 +143,6 @@ class _TripListYearState extends State<TripListYear> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // 새로운 여행을 추가하는 로직
-          setState(() {
-            trips.add({
-              'year': '2025',
-              'imagePath': 'assets/avatar1.jpeg',
-            });
-          });
-        },
-        child: const Icon(Icons.add),
-      ),
     );
   }
-}
-
-class TripCard extends StatelessWidget {
-  final String year;
-  final String imagePath;
-
-  const TripCard({required this.year, required this.imagePath});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
-      child: Column(
-        children: <Widget>[
-          ClipRRect(
-            borderRadius: BorderRadius.circular(16.0),
-            child: Image.asset(
-              imagePath,
-              height: 200,
-              width: 200,
-              fit: BoxFit.cover,
-            ),
-          ),
-          const SizedBox(height: 8.0),
-          Text(
-            year,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class GradientText extends StatelessWidget {
-  GradientText(
-      this.text, {
-        required this.gradient,
-        this.style,
-      });
-
-  final String text;
-  final TextStyle? style;
-  final Gradient gradient;
-
-  @override
-  Widget build(BuildContext context) {
-    return ShaderMask(
-      shaderCallback: (bounds) {
-        return gradient.createShader(
-          Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-        );
-      },
-      child: Text(
-        text,
-        style: style?.copyWith(color: Colors.white) ?? const TextStyle(color: Colors.white),
-      ),
-    );
-  }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: TripListYear(),
-  ));
 }
