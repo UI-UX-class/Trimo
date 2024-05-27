@@ -23,8 +23,8 @@ class _ShowTripState extends State<ShowTrip> {
       2: ["펜션 출발", "파도리해식동굴", "파도리해수욕장", "파도리해안사구", "집 도착"],
     },
     tripDiary: "태안 여행의 첫날, 꽂지 해안공원과 꽂지 해수욕장을 방문했다... 어쩌구 저쩌구",
-    tripImage1: File('/data/user/0/com.example.trimo_write/cache/scaled_1000007976.jpg'),
-    tripImage2: File('/data/user/0/com.example.trimo_write/cache/scaled_1000008055.jpg'),
+    tripImage1: '/data/user/0/com.example.trimo_write/cache/scaled_1000007976.jpg',
+    tripImage2: '/data/user/0/com.example.trimo_write/cache/scaled_1000008055.jpg',
   );
 
   @override
@@ -249,9 +249,9 @@ class _ShowTripState extends State<ShowTrip> {
                                         child: Container(
                                           height: 180,
                                           color: Color(0xFFEAEBF2),
-                                          child: trip.tripImage1.existsSync() // 파일이 존재하는지 확인
-                                              ? Image.file(trip.tripImage1) // 파일이 존재하면 이미지 출력
-                                              : Icon(Icons.image_not_supported), // 파일이 없을 경우 텍스트 출력,
+                                          // child: trip.tripImage1.existsSync() // 파일이 존재하는지 확인
+                                          //     ? Image.file(trip.tripImage1) // 파일이 존재하면 이미지 출력
+                                          //     : Icon(Icons.image_not_supported), // 파일이 없을 경우 텍스트 출력,
                                         ),
                                       ),
                                     ),
@@ -261,9 +261,9 @@ class _ShowTripState extends State<ShowTrip> {
                                       child: Container(
                                         height: 180,
                                         color: Color(0xFFEAEBF2),
-                                        child: trip.tripImage2.existsSync() // 파일이 존재하는지 확인
-                                            ? Image.file(trip.tripImage2) // 파일이 존재하면 이미지 출력
-                                            : Icon(Icons.image_not_supported), // 파일 없으면 아이콘 출력
+                                        // child: trip.tripImage2.existsSync() // 파일이 존재하는지 확인
+                                        //     ? Image.file(trip.tripImage2) // 파일이 존재하면 이미지 출력
+                                        //     : Icon(Icons.image_not_supported), // 파일 없으면 아이콘 출력
                                       ),
                                     ),
                                   ],
