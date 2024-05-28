@@ -9,7 +9,13 @@ var postTripRouter = require('./routes/postTripRoutes');
 
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
-
+app.use(express.json({
+    limit : "400mb"
+}));
+app.use(express.urlencoded({
+    limit:"400mb",
+    extended: false
+}));
 app.use('/getnote', tripRouter);
 app.use('/getYearsNote', tripYearRouter);
 app.use('/newnote', postTripRouter);
