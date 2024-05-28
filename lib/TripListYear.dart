@@ -11,8 +11,8 @@ class TripListYear extends StatefulWidget {
 class _TripListYearState extends State<TripListYear> {
   final List<Map<String, String>> trips = [
     {'year': '2024', 'imagePath': 'assets/busanTest.jpg'},
-    {'year': '2023', 'imagePath': 'assets/busanTest.jpg'},
-    {'year': '2022', 'imagePath': 'assets/busanTest.jpg'},
+    {'year': '2023', 'imagePath': 'assets/tripListImage1.jpg'},
+    {'year': '2022', 'imagePath': 'assets/tripListImage2.jpg'},
   ];
 
   @override
@@ -61,6 +61,7 @@ class _TripListYearState extends State<TripListYear> {
             ),
             Expanded(
               child: ListView.builder(
+                itemCount: trips.length,
                 itemBuilder: (context, index) {
                   final trip = trips[index];
                   return Transform.translate(
