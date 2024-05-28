@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:trimo/ShowTrip.dart';
 import './trip.dart';
 
 enum Location {
@@ -109,15 +110,23 @@ class _WriteTripState extends State<WriteTrip> {
     var uri = "http://10.0.2.2:3000/newnote";
     try {
       var body = json.encode(newTrip.toJson());
-      print(body);
+
       var response = await http.post(
         Uri.parse(uri),
         headers: {"Content-Type": "application/json"},
         body: body,
       );
-      if (response.statusCode == 200) {
+      print("확인절차 확인절차 확인절차");
+      print(response.body);
+      if (response.statusCode == 201) {
         print('데이터 저장 성공');
-        Navigator.pushReplacementNamed(context, '/showTrip');
+        final responseBody = jsonDecode(response.body);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ShowTrip(tripId: responseBody['Data'],),
+          ),
+        );
       } else {
         print('데이터 저장 실패: ${response.statusCode}');
         print('응답 내용: ${response.body}');

@@ -14,7 +14,7 @@ async function postTrip(data, postData) {
                 );
                 return reject("DB ERR");
             }
-            resolve(db_data);
+            resolve(db_data.insertId);
             console.log("Dao out");
         });
     });

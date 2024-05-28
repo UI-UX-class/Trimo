@@ -36,7 +36,7 @@ class TrimoApp extends StatelessWidget {
         '/mainPage': (context) => MainPage(),
         '/changeInfo': (context) => ChangeInfo(),
         '/logInPage': (context) => SignInTest(),
-        '/showTrip': (context) => ShowTrip(tripId: 11,),// 경로와 해당 페이지를 매핑
+        '/showTrip': (context) => ShowTrip(),// 경로와 해당 페이지를 매핑
       },
     );
   }

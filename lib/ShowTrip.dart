@@ -6,9 +6,9 @@ import 'dart:convert';
 import "./trip.dart";
 
 class ShowTrip extends StatefulWidget {
-  final int tripId;
+  final int? tripId;
 
-  ShowTrip({required this.tripId});
+  ShowTrip({this.tripId});
 
   @override
   _ShowTripState createState() => _ShowTripState();
@@ -40,24 +40,32 @@ class _ShowTripState extends State<ShowTrip> {
   }
 
   Future<void> _fetchTripData() async {
-    final url = 'http://10.0.2.2:3000/getnote/${widget.tripId}';
+    late final url;
+    print("gaga: "+widget.tripId.toString());
+    if(widget.tripId == null){
+      url = 'http://10.0.2.2:3000/getnote/recent';
+    }
+    else{
+      url = 'http://10.0.2.2:3000/getnote/${widget.tripId}';
+    }
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);
+
       setState(() {
         tripData = responseBody['Data'];
-        trip.tripName = tripData!['title'];
-        trip.tripWhere = tripData!['country'];
-        trip.tripDiary = tripData!['contents'];
-        var year = int.parse(tripData!['start_date'].substring(0,4));
-        var month = int.parse(tripData!['start_date'].substring(5,7));
-        var day = int.parse(tripData!['start_date'].substring(8,10));
+        trip.tripName = tripData!['title'] ?? 'Default Trip Name';
+        trip.tripWhere = tripData!['country'] ?? 'Default Country';
+        trip.tripDiary = tripData!['contents'] ?? 'Default Diary Entry';
+        var year = int.parse(tripData?['start_date']?.substring(0,4) ?? '2024');
+        var month = int.parse(tripData?['start_date']?.substring(5,7) ?? '05');
+        var day = int.parse(tripData?['start_date']?.substring(8,10) ?? '10');
         trip.tripWhenStart = DateTime(year, month, day);
-        var year_e = int.parse(tripData!['end_date'].substring(0,4));
-        var month_e = int.parse(tripData!['end_date'].substring(5,7));
-        var day_e = int.parse(tripData!['end_date'].substring(8,10));
-        trip.tripWhenEnd = DateTime(year_e,month_e,day_e);
+        var year_e = int.parse(tripData?['end_date']?.substring(0,4) ?? '2024');
+        var month_e = int.parse(tripData?['end_date']?.substring(5,7) ?? '05');
+        var day_e = int.parse(tripData?['end_date']?.substring(8,10) ?? '13');
+        trip.tripWhenEnd = DateTime(year_e, month_e, day_e);
         print("hello");
         trip.tripPlace = {};
         tripData!['trip_place'].forEach((key, value){
@@ -73,6 +81,7 @@ class _ShowTripState extends State<ShowTrip> {
 
   @override
   Widget build(BuildContext context) {
+    print("data-"+tripData.toString());
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
