@@ -2,8 +2,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'TripList.dart';
 import 'package:card_swiper/card_swiper.dart';
+import 'package:url_launcher/url_launcher.dart';
 import './NewPage.dart';
 import './MyPage.dart';
+import './SignIn.dart';
+import './TripListYear.dart';
+import './SignUp.dart';
+import './ChangeAccountInfo.dart';
+import './ShowTrip.dart';
+import './WriteTrip.dart';
 
 void main() {
   runApp(TrimoApp());
@@ -13,15 +20,19 @@ class TrimoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
       home: MainPage(),
       routes: {
         '/newPage': (context) => NewPage(),
-        '/myPage': (context) => maybeMyPage(), // 경로와 해당 페이지를 매핑
+        '/myPage': (context) => MyPage(),
+        '/signInPage': (context) => SignInTest(),
+        '/signUpPage': (context) => SignUpTest(),
+        '/tripListYear': (context) => TripListYear(),
+        '/mainPage': (context) => MainPage(),
+        '/changeInfo': (context) => ChangeInfo(),
+        '/logInPage': (context) => SignInTest(),
+        '/showTrip': (context) => ShowTrip(),// 경로와 해당 페이지를 매핑
       },
     );
   }
@@ -39,15 +50,32 @@ class _MainPageState extends State<MainPage> {
     'assets/travel_banner3.png'
   ];
 
+  final List<String> bannerUrls = [
+    'https://www.booking.com/',
+    'https://www.agoda.com/',
+    'https://www.hotels.com/'
+  ];
+
+  Future<void> _launchURL(String url) async {
+    final uri = Uri.parse(url);
+    if (!await launchUrl(uri)) {
+      throw 'Could not launch $url';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text(''),
+      ),
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
-              margin: EdgeInsets.only(top: 90.0, bottom: 40.0),
+              margin: EdgeInsets.only(top: 30.0, bottom: 40.0),
               child: ShaderMask(
                 shaderCallback: (bounds) => LinearGradient(
                   colors: [Colors.blueAccent, Colors.black],
@@ -64,8 +92,9 @@ class _MainPageState extends State<MainPage> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            Center(
+              child:SizedBox(
+              width: 330,
               child: Column(
                 children: [
                   Row(
@@ -73,7 +102,7 @@ class _MainPageState extends State<MainPage> {
                     children: [
                       GestureDetector(
                           onTap: () {
-                            Navigator.pushNamed(context, '/newPage'); // 최근 여행 페이지 이동
+                            Navigator.pushNamed(context, '/showTrip'); // 최근 여행 페이지 이동
                           },
                           child: Stack(children: <Widget>[
                             ClipRRect(
@@ -86,13 +115,13 @@ class _MainPageState extends State<MainPage> {
                                   ),
                                 ])),
                             Positioned(
-                              bottom: 25,
+                              bottom: 26,
                               left: 25,
                               child: Text(
                                 '부산',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  fontSize: 27,
+                                  fontSize: 28,
                                   color: Colors.white,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -105,7 +134,7 @@ class _MainPageState extends State<MainPage> {
                                 '05.10 ~ 05.13',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  fontSize: 19,
+                                  fontSize: 20,
                                   color: Colors.white,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -117,7 +146,24 @@ class _MainPageState extends State<MainPage> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              Navigator.pushNamed(context, '/newPage'); // 최근 여행 페이지 이동
+                              showModalBottomSheet<void>(
+                                context: context,
+                                isScrollControlled: true,
+                                backgroundColor: Colors.white,
+                                barrierColor: Colors.transparent,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(15.0),
+                                  ),
+                                  side: BorderSide(
+                                    color: Colors.black,
+                                    width: 1,
+                                  ),
+                                ),
+                                builder: (BuildContext context) {
+                                  return WriteTrip();
+                                },
+                              ); // 새로운 여행 페이지 이동
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(3.0),
@@ -133,7 +179,7 @@ class _MainPageState extends State<MainPage> {
                                       '새로운 여행',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        fontSize: 11,
+                                        fontSize: 12,
                                         color: Colors.white,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -146,7 +192,7 @@ class _MainPageState extends State<MainPage> {
                           SizedBox(height: 20),
                           GestureDetector(
                             onTap: () {
-                              Navigator.pushNamed(context, '/newPage'); // 최근 여행 페이지 이동
+                              Navigator.pushNamed(context, '/signInPage'); // 로그인 페이지 이동
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(3.0),
@@ -162,7 +208,7 @@ class _MainPageState extends State<MainPage> {
                                       '로그인',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        fontSize: 11,
+                                        fontSize: 12,
                                         color: Colors.white,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -182,9 +228,12 @@ class _MainPageState extends State<MainPage> {
                     width: 300,
                     child: Swiper(
                       itemBuilder: (BuildContext context, int index) {
-                        return Image.asset(
-                          bannerList[index],
-                          fit: BoxFit.fill,
+                        return GestureDetector(
+                          onTap: () => _launchURL(bannerUrls[index]),
+                          child: Image.asset(
+                            bannerList[index],
+                            fit: BoxFit.fill,
+                          ),
                         );
                       },
                       itemCount: bannerList.length,
@@ -206,9 +255,7 @@ class _MainPageState extends State<MainPage> {
                         onTap: () {
                           Navigator.pushNamed(context, '/myPage'); // 최근 여행 페이지 이동
                         },
-                        child: Transform.translate(
-                          offset: const Offset(5, 0),
-                          child: ClipRRect(
+                        child: ClipRRect(
                             borderRadius: BorderRadius.circular(3.0),
                             child: Stack(children: <Widget>[
                               Image.asset('assets/mypage.png',
@@ -221,7 +268,7 @@ class _MainPageState extends State<MainPage> {
                                   '마이페이지',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    fontSize: 11,
+                                    fontSize: 12,
                                     color: Colors.white,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -229,14 +276,11 @@ class _MainPageState extends State<MainPage> {
                               ),
                             ]),
                           ),
-                        ),
                       ),
                       GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(context, '/newPage'); // 최근 여행 페이지 이동
+                          Navigator.pushNamed(context, '/tripListYear'); // 최근 여행 페이지 이동
                         },
-                        child: Transform.translate(
-                            offset: const Offset(-5, 0),
                             child: ClipRRect(
                                 borderRadius: BorderRadius.circular(3.0),
                                 child: Stack(children: <Widget>[
@@ -249,23 +293,21 @@ class _MainPageState extends State<MainPage> {
                                       '전체 여행 일지',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        fontSize: 11,
+                                        fontSize: 12,
                                         color: Colors.white,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
                                   ),
                                 ]))),
-                      )],
+                      ],
                   ),
                 ],
               ),
             ),
-          ],
+            )],
         ),
       ),
     );
   }
 }
-
-

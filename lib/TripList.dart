@@ -38,14 +38,22 @@ class _TripListState extends State<TripList> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                GradientText(
-                  'TRIMO',
-                  gradient: LinearGradient(
-                    colors: [Color(0xFF002FFF), Color(0xFF000000)],
-                  ),
-                  style: TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
+                Container(
+                  margin: EdgeInsets.only(top: 30.0, bottom: 15.0),
+                  child: ShaderMask(
+                    shaderCallback: (bounds) => LinearGradient(
+                      colors: [Colors.blueAccent, Colors.black],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ).createShader(bounds),
+                    child: Text(
+                      'TRIMO',
+                      style: TextStyle(
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue,
+                      ),
+                    ),
                   ),
                 ),
               ],
