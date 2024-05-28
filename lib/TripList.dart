@@ -164,6 +164,7 @@ class _TripListState extends State<TripList> {
                         Navigator.pushNamed(context, '/showTrip');
                       },
                       child: Card(
+                        color: Colors.white,
                         margin: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 18.0),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(3),
@@ -231,6 +232,7 @@ class _TripListState extends State<TripList> {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         side: BorderSide(color: Colors.indigo, width: 1),
+                        backgroundColor: Colors.white,
                       ),
                       onPressed: () {
                         showModalBottomSheet<void>(
