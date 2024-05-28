@@ -1,19 +1,10 @@
 const db = require("../config/db.js");
 
-async function postTrip(data) { // 여기서 'req' 대신 'data' 사용
-    console.log("Dao In");
+async function postTrip(data, postData) {
     return new Promise((resolve, reject) => {
-        const { user_id, title, contents, country, domestic, start_date, end_date, days, time, image_first, image_second, trip_place } = data;
-
-        const details = {
-            trip_place: trip_place // 사용자 입력값
-        };
-
-        const detailsJSON = JSON.stringify(details);
-
         var queryData = `INSERT INTO travel (user_id, title, contents, country, domestic, start_date, end_date, days, time, image_first, image_second, trip_place)
-                         VALUES (${user_id}, '${title}', '${contents}', '${country}', ${domestic ? 1 : 0}, '${start_date}', '${end_date}', '${days}', '${time}', '${image_first}', '${image_second}', '${detailsJSON}')`;
-
+                         VALUES (${postData.user_id}, '${data.title}', '${data.contents}', '${data.country}', ${data.domestic ? 1 : 0}, 
+                         '${data.start_date}', '${data.end_date}', '${data.days}', '${postData.time}','${data.image_first}', '${data.image_second}', '${postData.trip_place}')`;
         db.query(queryData, (error, db_data) => {
             if (error) {
                 console.error(
