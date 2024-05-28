@@ -61,6 +61,7 @@ class _TripListYearState extends State<TripListYear> {
             ),
             Expanded(
               child: ListView.builder(
+                itemCount: trips.length,
                 itemBuilder: (context, index) {
                   final trip = trips[index];
                   return Transform.translate(
