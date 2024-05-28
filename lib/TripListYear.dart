@@ -61,7 +61,6 @@ class _TripListYearState extends State<TripListYear> {
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: trips.length,
                 itemBuilder: (context, index) {
                   final trip = trips[index];
                   return Transform.translate(
@@ -72,7 +71,7 @@ class _TripListYearState extends State<TripListYear> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => TripList()),
+                            MaterialPageRoute(builder: (context) => TripList(userId: 1,year: int.parse(trips[index]['year']!))),
                           );
                         },
                         child: Padding(
