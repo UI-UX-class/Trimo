@@ -72,7 +72,7 @@ class _TripListYearState extends State<TripListYear> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => TripList(userId: 1,year: int.parse(trips[index]['year']!))),
+                            MaterialPageRoute(builder: (context) => TripList(userId: 1,year: 2024)),
                           );
                         },
                         child: Padding(
