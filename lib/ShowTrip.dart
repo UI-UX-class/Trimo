@@ -58,7 +58,6 @@ class _ShowTripState extends State<ShowTrip> {
         var month_e = int.parse(tripData!['end_date'].substring(5,7));
         var day_e = int.parse(tripData!['end_date'].substring(8,10));
         trip.tripWhenEnd = DateTime(year_e,month_e,day_e);
-        print(tripData!['trip_place']["1"][0].runtimeType);
         print("hello");
         trip.tripPlace = {};
         tripData!['trip_place'].forEach((key, value){
