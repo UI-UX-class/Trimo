@@ -1,22 +1,14 @@
 const express = require("express");
 const app = express();
-const db = require("/Users/irmac/Desktop/승희/Trimo/src/config/db.js");
+const db = require("./config/db.js");
 const port = 3000;
 
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-})
+var loginRouter = require('./routes/loginRoutes');
 
-// DB Test
-db.getConnection((error, connection) => {
-    connection.query('SELECT * FROM user', (error, result, fields) => {
-    if(!error) {
-        console.log(result)
-        connection.release()
-    } else {
-        throw error
-    }
-})})
+app.use(express.json());
+app.use(express.urlencoded({extended: false}));
+
+app.use('/user', loginRouter);
 
 app.listen(port, () => {
     console.log('Server running at 3000 Port !');
