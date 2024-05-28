@@ -13,6 +13,16 @@ const authUtil = require('../middlewares/auth');
 //     }
 // })
 
+router.get('/login', async(req, res) => {
+    console.log("login router");
+    try {
+        await loginService.login(req.params);
+    } catch (err) {
+        console.log(err);
+        res.status(400).json({message : err.message});
+    }
+})
+
 router.post('/signup', async(req, res) => {
     console.log('signup post router');
     try {
@@ -20,7 +30,17 @@ router.post('/signup', async(req, res) => {
         res.status(result.Status).json(result);
     } catch (err) {
         console.log(err);
-        res.status(400).json({ message : err.message });
+        res.status(400).json({message : err.message});
+    }
+})
+
+router.put('/edit', async(req, res) => {
+    console.log("edit user router");
+    try {
+        await loginService.editUser(req.body);
+    } catch(err) {
+        console.log(err);
+        res.status(400).json({message : err.message});
     }
 })
 
