@@ -9,8 +9,8 @@ class Trip {
   int daysDifference;
   Map<int, List<String>> tripPlace;
   String tripDiary;
-  File tripImage1;
-  File tripImage2;
+  String tripImage1;
+  String tripImage2;
 
   Trip({
     required this.tripName,
@@ -24,4 +24,19 @@ class Trip {
     required this.tripImage1,
     required this.tripImage2,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': tripName,
+      'country': tripWhere,
+      'domestic': isAbroad,
+      'start_date': tripWhenStart.toIso8601String(),
+      'end_date': tripWhenEnd.toIso8601String(),
+      'days': daysDifference,
+      'trip_place': Map.fromIterable(tripPlace.keys, key: (key) => key.toString(), value: (key) => tripPlace[key]),
+      'contents': tripDiary,
+      'image_first': tripImage1,
+      'image_second': tripImage2,
+    };
+  }
 }

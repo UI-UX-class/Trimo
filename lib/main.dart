@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'TripList.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:url_launcher/url_launcher.dart';
 import './NewPage.dart';
@@ -17,11 +16,16 @@ void main() {
 }
 
 class TrimoApp extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
+        useMaterial3: true,
+      ),
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Trimo',
       home: MainPage(),
       routes: {
         '/newPage': (context) => NewPage(),
@@ -32,7 +36,7 @@ class TrimoApp extends StatelessWidget {
         '/mainPage': (context) => MainPage(),
         '/changeInfo': (context) => ChangeInfo(),
         '/logInPage': (context) => SignInTest(),
-        '/showTrip': (context) => ShowTrip(),// 경로와 해당 페이지를 매핑
+        '/showTrip': (context) => ShowTrip(tripId: 11,),// 경로와 해당 페이지를 매핑
       },
     );
   }

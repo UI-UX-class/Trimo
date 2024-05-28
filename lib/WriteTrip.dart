@@ -1,8 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
+import 'package:http/http.dart' as http;
 import './trip.dart';
 
 enum Location {
@@ -32,6 +33,8 @@ class _WriteTripState extends State<WriteTrip> {
   final picker = ImagePicker();
   File? _image1;
   File? _image2; // 가져온 사진들을 보여주기 위한 변수
+  late String image1Path;
+  late String image2Path;
 
   @override
   void initState() {
@@ -47,7 +50,7 @@ class _WriteTripState extends State<WriteTrip> {
   // 일차 추가 함수
   void addData(int index) {
     setState(() {
-      _tripPlace[index] = ["출발", "도착"];
+      _tripPlace[index] = ["", ""];
     });
   }
 
@@ -77,8 +80,10 @@ class _WriteTripState extends State<WriteTrip> {
       if (pickedFile != null) {
         if (index == 1) {
           _image1 = File(pickedFile.path);
+          image1Path = pickedFile.path;
         } else {
           _image2 = File(pickedFile.path);
+          image2Path = pickedFile.path;
         }
       } else {
         print("No Image Picked");
@@ -87,7 +92,7 @@ class _WriteTripState extends State<WriteTrip> {
   }
 
   // 여행 정보 저장 함수
-  void _saveTrip() {
+  Future<void> _saveTrip() async {
     final newTrip = Trip(
       tripName: _tripNameController.text,
       tripWhere: _tripWhereController.text,
@@ -97,15 +102,31 @@ class _WriteTripState extends State<WriteTrip> {
       daysDifference: _daysDifference,
       tripPlace: _tripPlace,
       tripDiary: _tripDiaryController.text,
-      tripImage1: _image1 ?? File(''), // null일 경우 기본값 사용
-      tripImage2: _image2 ?? File(''), // null일 경우 기본값 사용
+      tripImage1: image1Path,
+      tripImage2: image2Path,
     );
 
-    print("저장된 여행 정보: ${newTrip.tripImage1}");
-    print("저장된 여행 정보: ${newTrip.tripImage2}");
-    // 여행 정보 저장 후 필요한 곳에서 사용
-    Navigator.pushReplacementNamed(context, '/showTrip');
+    var uri = "http://10.0.2.2:3000/newnote";
+    try {
+      var body = json.encode(newTrip.toJson());
+      print(body);
+      var response = await http.post(
+        Uri.parse(uri),
+        headers: {"Content-Type": "application/json"},
+        body: body,
+      );
+      if (response.statusCode == 200) {
+        print('데이터 저장 성공');
+        Navigator.pushReplacementNamed(context, '/showTrip');
+      } else {
+        print('데이터 저장 실패: ${response.statusCode}');
+        print('응답 내용: ${response.body}');
+      }
+    } catch (e) {
+      print('오류 발생: $e');
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -408,8 +429,7 @@ class _WriteTripState extends State<WriteTrip> {
                 margin: EdgeInsets.only(top: 40, bottom: 20),
                 child: InkWell(
                   onTap: () {
-                    // _saveTrip();
-                    Navigator.pushReplacementNamed(context, '/showTrip');
+                    _saveTrip();
                   }, // 저장 함수 호출
                   child: Container(
                     padding: EdgeInsets.symmetric(vertical: 15),

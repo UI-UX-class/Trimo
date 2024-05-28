@@ -1,13 +1,17 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import './trip.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import "./trip.dart";
 
 class ShowTrip extends StatefulWidget {
-  const ShowTrip({super.key});
+  final int tripId;
+
+  ShowTrip({required this.tripId});
 
   @override
-  State<ShowTrip> createState() => _ShowTripState();
+  _ShowTripState createState() => _ShowTripState();
 }
 
 class _ShowTripState extends State<ShowTrip> {
@@ -23,20 +27,68 @@ class _ShowTripState extends State<ShowTrip> {
       2: ["펜션 출발", "파도리해식동굴", "파도리해수욕장", "파도리해안사구", "집 도착"],
     },
     tripDiary: "태안 여행의 첫날, 꽂지 해안공원과 꽂지 해수욕장을 방문했다... 어쩌구 저쩌구",
-    tripImage1: File('/data/user/0/com.example.trimo_write/cache/scaled_1000007976.jpg'),
-    tripImage2: File('/data/user/0/com.example.trimo_write/cache/scaled_1000008055.jpg'),
+    tripImage1: '/data/user/0/com.example.trimo_write/cache/scaled_1000007976.jpg',
+    tripImage2: '/data/user/0/com.example.trimo_write/cache/scaled_1000008055.jpg',
   );
+
+  Map<String, dynamic>? tripData;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchTripData();
+  }
+
+  Future<void> _fetchTripData() async {
+    final url = 'http://10.0.2.2:3000/getnote/${widget.tripId}';
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final responseBody = jsonDecode(response.body);
+      setState(() {
+        tripData = responseBody['Data'];
+        trip.tripName = tripData!['title'];
+        trip.tripWhere = tripData!['country'];
+        trip.tripDiary = tripData!['contents'];
+        var year = int.parse(tripData!['start_date'].substring(0,4));
+        var month = int.parse(tripData!['start_date'].substring(5,7));
+        var day = int.parse(tripData!['start_date'].substring(8,10));
+        trip.tripWhenStart = DateTime(year, month, day);
+        var year_e = int.parse(tripData!['end_date'].substring(0,4));
+        var month_e = int.parse(tripData!['end_date'].substring(5,7));
+        var day_e = int.parse(tripData!['end_date'].substring(8,10));
+        trip.tripWhenEnd = DateTime(year_e,month_e,day_e);
+        print(tripData!['trip_place']["1"][0].runtimeType);
+        print("hello");
+        trip.tripPlace = {};
+        tripData!['trip_place'].forEach((key, value){
+          trip.tripPlace[int.parse(key)] = List<String>.from(value);
+        });
+        trip.tripImage1 = tripData!['image_first'];
+        trip.tripImage2 = tripData!['image_second'];
+      });
+    } else {
+      print('Failed to load trip data');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        title: const Text(' '),
+      ),
+      body: tripData == null
+          ? Center(child: CircularProgressIndicator())
+          : SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Center(
               child: Container(
-                margin: EdgeInsets.only(top: 90.0, bottom: 10.0),
+                margin: EdgeInsets.only(top: 30.0, bottom: 10.0),
                 child: ShaderMask(
                   shaderCallback: (bounds) => LinearGradient(
                     colors: [Colors.blueAccent, Colors.black],
@@ -244,8 +296,8 @@ class _ShowTripState extends State<ShowTrip> {
                                         child: Container(
                                           height: 180,
                                           color: Color(0xFFEAEBF2),
-                                          child: trip.tripImage1.existsSync() // 파일이 존재하는지 확인
-                                              ? Image.file(trip.tripImage1) // 파일이 존재하면 이미지 출력
+                                          child: trip.tripImage1.isNotEmpty // 파일이 존재하는지 확인
+                                              ? Image.file(File(trip.tripImage1)) // 파일이 존재하면 이미지 출력
                                               : Icon(Icons.image_not_supported), // 파일이 없을 경우 텍스트 출력,
                                         ),
                                       ),
@@ -256,8 +308,8 @@ class _ShowTripState extends State<ShowTrip> {
                                       child: Container(
                                         height: 180,
                                         color: Color(0xFFEAEBF2),
-                                        child: trip.tripImage2.existsSync() // 파일이 존재하는지 확인
-                                            ? Image.file(trip.tripImage2) // 파일이 존재하면 이미지 출력
+                                        child: trip.tripImage2.isNotEmpty // 파일이 존재하는지 확인
+                                            ? Image.file(File(trip.tripImage2)) // 파일이 존재하면 이미지 출력
                                             : Icon(Icons.image_not_supported), // 파일 없으면 아이콘 출력
                                       ),
                                     ),
