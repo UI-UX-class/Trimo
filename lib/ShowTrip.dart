@@ -293,9 +293,9 @@ class _ShowTripState extends State<ShowTrip> {
                                         child: Container(
                                           height: 180,
                                           color: Color(0xFFEAEBF2),
-                                          // child: trip.tripImage1.existsSync() // 파일이 존재하는지 확인
-                                          //     ? Image.file(trip.tripImage1) // 파일이 존재하면 이미지 출력
-                                          //     : Icon(Icons.image_not_supported), // 파일이 없을 경우 텍스트 출력,
+                                          child: trip.tripImage1.isNotEmpty // 파일이 존재하는지 확인
+                                              ? Image.file(File(trip.tripImage1)) // 파일이 존재하면 이미지 출력
+                                              : Icon(Icons.image_not_supported), // 파일이 없을 경우 텍스트 출력,
                                         ),
                                       ),
                                     ),
@@ -305,9 +305,9 @@ class _ShowTripState extends State<ShowTrip> {
                                       child: Container(
                                         height: 180,
                                         color: Color(0xFFEAEBF2),
-                                        // child: trip.tripImage2.existsSync() // 파일이 존재하는지 확인
-                                        //     ? Image.file(trip.tripImage2) // 파일이 존재하면 이미지 출력
-                                        //     : Icon(Icons.image_not_supported), // 파일 없으면 아이콘 출력
+                                        child: trip.tripImage2.isNotEmpty // 파일이 존재하는지 확인
+                                            ? Image.file(File(trip.tripImage2)) // 파일이 존재하면 이미지 출력
+                                            : Icon(Icons.image_not_supported), // 파일 없으면 아이콘 출력
                                       ),
                                     ),
                                   ],

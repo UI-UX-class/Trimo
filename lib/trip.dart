@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'dart:io';
 
 class Trip {
   String tripName;
@@ -27,17 +27,16 @@ class Trip {
 
   Map<String, dynamic> toJson() {
     return {
-      'tripName': tripName,
-      'tripWhere': tripWhere,
-      'isAbroad': isAbroad,
-      'tripWhenStart': tripWhenStart.toIso8601String(),
-      'tripWhenEnd': tripWhenEnd.toIso8601String(),
-      'daysDifference': daysDifference,
-      'tripPlace': tripPlace.map((key, value) => MapEntry(key.toString(), value)),
-      'tripDiary': tripDiary,
-      'tripImage1': tripImage1,
-      'tripImage2': tripImage2,
+      'title': tripName,
+      'country': tripWhere,
+      'domestic': isAbroad,
+      'start_date': tripWhenStart.toIso8601String(),
+      'end_date': tripWhenEnd.toIso8601String(),
+      'days': daysDifference,
+      'trip_place': Map.fromIterable(tripPlace.keys, key: (key) => key.toString(), value: (key) => tripPlace[key]),
+      'contents': tripDiary,
+      'image_first': tripImage1,
+      'image_second': tripImage2,
     };
   }
 }
-
