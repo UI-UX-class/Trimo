@@ -40,40 +40,52 @@ class _ShowTripState extends State<ShowTrip> {
   }
 
   Future<void> _fetchTripData() async {
-    late final url;
-    print("gaga: "+widget.tripId.toString());
-    if(widget.tripId == null){
-      url = 'http://10.0.2.2:3000/getnote/recent';
-    }
-    else{
-      url = 'http://10.0.2.2:3000/getnote/${widget.tripId}';
-    }
+    final url = 'http://10.0.2.2:3000/getnote/${widget.tripId}';
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);
 
+      print("responseBody");
+      print(responseBody);
       setState(() {
-        tripData = responseBody['Data'];
-        trip.tripName = tripData!['title'] ?? 'Default Trip Name';
-        trip.tripWhere = tripData!['country'] ?? 'Default Country';
-        trip.tripDiary = tripData!['contents'] ?? 'Default Diary Entry';
-        var year = int.parse(tripData?['start_date']?.substring(0,4) ?? '2024');
-        var month = int.parse(tripData?['start_date']?.substring(5,7) ?? '05');
-        var day = int.parse(tripData?['start_date']?.substring(8,10) ?? '10');
-        trip.tripWhenStart = DateTime(year, month, day);
-        var year_e = int.parse(tripData?['end_date']?.substring(0,4) ?? '2024');
-        var month_e = int.parse(tripData?['end_date']?.substring(5,7) ?? '05');
-        var day_e = int.parse(tripData?['end_date']?.substring(8,10) ?? '13');
-        trip.tripWhenEnd = DateTime(year_e, month_e, day_e);
-        print("hello");
-        trip.tripPlace = {};
-        tripData!['trip_place'].forEach((key, value){
-          trip.tripPlace[int.parse(key)] = List<String>.from(value);
-        });
-        trip.tripImage1 = tripData!['image_first'];
-        trip.tripImage2 = tripData!['image_second'];
-      });
+        if (responseBody is List) {
+          if (responseBody.isNotEmpty) {
+            tripData = responseBody[0] as Map<String, dynamic>?;
+          }
+        } else if (responseBody is Map) {
+          if (responseBody['Data'] is List) {
+            final dataList = responseBody['Data'] as List;
+            if (dataList.isNotEmpty) {
+              tripData = dataList[0] as Map<String, dynamic>?;
+            }
+          } else if (responseBody['Data'] is Map) {
+            tripData = responseBody['Data'] as Map<String, dynamic>?;
+          }
+        }
+        if(tripData != null){
+          trip.tripName = tripData!['title'] ?? 'Default Trip Name';
+          trip.tripWhere = tripData!['country'] ?? 'Default Country';
+          trip.tripDiary = tripData!['contents'] ?? 'Default Diary Entry';
+          var year = int.parse(tripData?['start_date']?.substring(0,4) ?? '2024');
+          var month = int.parse(tripData?['start_date']?.substring(5,7) ?? '05');
+          var day = int.parse(tripData?['start_date']?.substring(8,10) ?? '10');
+          trip.tripWhenStart = DateTime(year, month, day);
+          var year_e = int.parse(tripData?['end_date']?.substring(0,4) ?? '2024');
+          var month_e = int.parse(tripData?['end_date']?.substring(5,7) ?? '05');
+          var day_e = int.parse(tripData?['end_date']?.substring(8,10) ?? '13');
+          trip.tripWhenEnd = DateTime(year_e, month_e, day_e);
+          print("hello");
+          trip.tripPlace = {};
+          tripData!['trip_place'].forEach((key, value){
+            trip.tripPlace[int.parse(key)] = List<String>.from(value);
+          });
+          trip.tripImage1 = tripData!['image_first'] ?? '';
+          trip.tripImage2 = tripData!['image_second'] ?? '';
+        }
+      }
+      );
+      print(tripData);
     } else {
       print('Failed to load trip data');
     }
@@ -81,7 +93,8 @@ class _ShowTripState extends State<ShowTrip> {
 
   @override
   Widget build(BuildContext context) {
-    print("data-"+tripData.toString());
+    print("hahahaha");
+    print(tripData);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,

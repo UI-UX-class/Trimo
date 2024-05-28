@@ -121,6 +121,7 @@ class _WriteTripState extends State<WriteTrip> {
       if (response.statusCode == 201) {
         print('데이터 저장 성공');
         final responseBody = jsonDecode(response.body);
+        print(responseBody);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
