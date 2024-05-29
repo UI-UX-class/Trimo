@@ -72,25 +72,25 @@ class _WriteTripState extends State<WriteTrip> {
   }
 
   // 이미지 가져오기 함수
-  Future getImageGallery(int index) async {
-    final pickedFile = await picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 80,
-    );
-    setState(() {
-      if (pickedFile != null) {
-        if (index == 1) {
-          _image1 = File(pickedFile.path);
-          image1Path = pickedFile.path;
-        } else {
-          _image2 = File(pickedFile.path);
-          image2Path = pickedFile.path;
-        }
-      } else {
-        print("No Image Picked");
-      }
-    });
-  }
+  // Future getImageGallery(int index) async {
+  //   final pickedFile = await picker.pickImage(
+  //     source: ImageSource.gallery,
+  //     imageQuality: 80,
+  //   );
+  //   setState(() {
+  //     if (pickedFile != null) {
+  //       if (index == 1) {
+  //         _image1 = File(pickedFile.path);
+  //         image1Path = pickedFile.path;
+  //       } else {
+  //         _image2 = File(pickedFile.path);
+  //         image2Path = pickedFile.path;
+  //       }
+  //     } else {
+  //       print("No Image Picked");
+  //     }
+  //   });
+  // }
 
   // 여행 정보 저장 함수
   Future<void> _saveTrip() async {
@@ -382,54 +382,74 @@ class _WriteTripState extends State<WriteTrip> {
                         Expanded(
                           flex: 1,
                           child: InkWell(
-                              onTap: () async {
-                                XFile? pickedImage = await picker.pickImage(source: ImageSource.gallery);
-                                if (pickedImage != null) {
-                                  setState(() {
-                                    getImageGallery(1);
-                                  });
+                            onTap: () async {
+                              final pickedFile = await picker.pickImage(
+                                source: ImageSource.gallery,
+                                imageQuality: 80,
+                              );
+                              setState(() {
+                                if (pickedFile != null) {
+                                  _image1 = File(pickedFile.path);
+                                  image1Path = pickedFile.path;
+                                } else {
+                                  print("No Image Picked");
                                 }
-                              },
-                              child: Container(
-                                  height: 180,
-                                  color: Color(0xFFEAEBF2),
-                                  child: _image1 != null
-                                      ? Image.file(
-                                    _image1!.absolute,
-                                    fit: BoxFit.cover,
-                                  )
-                                      :Center(
-                                    child: Icon(Icons.add_photo_alternate_outlined, size: 30, color: Colors.grey,),
-                                  )
+                              });
+                            },
+                            child: Container(
+                              height: 180,
+                              color: Color(0xFFEAEBF2),
+                              child: _image1 != null
+                                  ? Image.file(
+                                _image1!.absolute,
+                                fit: BoxFit.cover,
                               )
+                                  : Center(
+                                child: Icon(
+                                  Icons.add_photo_alternate_outlined,
+                                  size: 30,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                        SizedBox(width: 10,),
                         Expanded(
                           flex: 1,
                           child: InkWell(
-                              onTap: () async {
-                                XFile? pickedImage = await picker.pickImage(source: ImageSource.gallery);
-                                if (pickedImage != null) {
-                                  setState(() {
-                                    getImageGallery(2);
-                                  });
+                            onTap: () async {
+                              final pickedFile = await picker.pickImage(
+                                source: ImageSource.gallery,
+                                imageQuality: 80,
+                              );
+                              setState(() {
+                                if (pickedFile != null) {
+                                  _image2 = File(pickedFile.path);
+                                  image2Path = pickedFile.path;
+                                } else {
+                                  print("No Image Picked");
                                 }
-                              },
-                              child: Container(
-                                  height: 180,
-                                  color: Color(0xFFEAEBF2),
-                                  child: _image2 != null
-                                      ? Image.file(
-                                    _image2!.absolute,
-                                    fit: BoxFit.cover,
-                                  )
-                                      :Center(
-                                    child: Icon(Icons.add_photo_alternate_outlined, size: 30, color: Colors.grey,),
-                                  )
+                              });
+                            },
+                            child: Container(
+                              height: 180,
+                              color: Color(0xFFEAEBF2),
+                              child: _image2 != null
+                                  ? Image.file(
+                                _image2!.absolute,
+                                fit: BoxFit.cover,
                               )
+                                  : Center(
+                                child: Icon(
+                                  Icons.add_photo_alternate_outlined,
+                                  size: 30,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
+
                       ],
                     )
                   ],
