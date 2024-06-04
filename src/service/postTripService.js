@@ -2,9 +2,8 @@ const postTripDao = require("../dao/postTripDao");
 
 async function postTrip(data) {
     try {
-        const details = {
-            trip_place: data.trip_place
-        };
+        const details = data.trip_place;
+
         const detailsJSON = JSON.stringify(details);
 
         const now = new Date();

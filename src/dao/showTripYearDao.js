@@ -1,12 +1,13 @@
 const db = require("../config/db.js");
 
 async function showTripListYear(req){
-    console.log("Dao In");
+    //console.log("Dao In");
     return new Promise((resolve, reject) => {
-        var queryData = `SELECT travel_id, title, country, start_date, end_date, image_first FROM travel WHERE YEAR(start_date) = 2003 AND user_id = 1`;
+        var queryData = `SELECT travel_id, title, country, start_date, end_date, image_first FROM travel
+        WHERE YEAR(start_date) = 2024 AND user_id = 1`;
         db.query(queryData, (error, db_data) => {
             if(error) {
-                logger.error(
+                console.error(
                     'DB error [tripList]' +
                     '\n \t' + queryData +
                     '\n \t' + error
@@ -14,7 +15,7 @@ async function showTripListYear(req){
                 reject("DB ERR");
             }
             resolve(db_data);
-            console.log("Dao out");
+            //console.log("Dao out");
         })
     })
 }

@@ -6,9 +6,9 @@ import 'dart:convert';
 import "./trip.dart";
 
 class ShowTrip extends StatefulWidget {
-  final int tripId;
+  final int? tripId;
 
-  ShowTrip({required this.tripId});
+  ShowTrip({this.tripId});
 
   @override
   _ShowTripState createState() => _ShowTripState();
@@ -39,34 +39,64 @@ class _ShowTripState extends State<ShowTrip> {
     _fetchTripData();
   }
 
+  Future<void> _deleteTripData(travel_id) async{
+    final url = 'http://10.0.2.2:3000/deleteTrip';
+    final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+            'travel_id' : travel_id
+        })
+    );
+  }
+
   Future<void> _fetchTripData() async {
     final url = 'http://10.0.2.2:3000/getnote/${widget.tripId}';
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);
+
+      print("responseBody");
+      print(responseBody);
       setState(() {
-        tripData = responseBody['Data'];
-        trip.tripName = tripData!['title'];
-        trip.tripWhere = tripData!['country'];
-        trip.tripDiary = tripData!['contents'];
-        var year = int.parse(tripData!['start_date'].substring(0,4));
-        var month = int.parse(tripData!['start_date'].substring(5,7));
-        var day = int.parse(tripData!['start_date'].substring(8,10));
-        trip.tripWhenStart = DateTime(year, month, day);
-        var year_e = int.parse(tripData!['end_date'].substring(0,4));
-        var month_e = int.parse(tripData!['end_date'].substring(5,7));
-        var day_e = int.parse(tripData!['end_date'].substring(8,10));
-        trip.tripWhenEnd = DateTime(year_e,month_e,day_e);
-        print(tripData!['trip_place']["1"][0].runtimeType);
-        print("hello");
-        trip.tripPlace = {};
-        tripData!['trip_place'].forEach((key, value){
-          trip.tripPlace[int.parse(key)] = List<String>.from(value);
-        });
-        trip.tripImage1 = tripData!['image_first'];
-        trip.tripImage2 = tripData!['image_second'];
-      });
+        if (responseBody is List) {
+          if (responseBody.isNotEmpty) {
+            tripData = responseBody[0] as Map<String, dynamic>?;
+          }
+        } else if (responseBody is Map) {
+          if (responseBody['Data'] is List) {
+            final dataList = responseBody['Data'] as List;
+            if (dataList.isNotEmpty) {
+              tripData = dataList[0] as Map<String, dynamic>?;
+            }
+          } else if (responseBody['Data'] is Map) {
+            tripData = responseBody['Data'] as Map<String, dynamic>?;
+          }
+        }
+        if(tripData != null){
+          trip.tripName = tripData!['title'] ?? 'Default Trip Name';
+          trip.tripWhere = tripData!['country'] ?? 'Default Country';
+          trip.tripDiary = tripData!['contents'] ?? 'Default Diary Entry';
+          var year = int.parse(tripData?['start_date']?.substring(0,4) ?? 'None');
+          var month = int.parse(tripData?['start_date']?.substring(5,7) ?? 'None');
+          var day = int.parse(tripData?['start_date']?.substring(8,10) ?? 'None');
+          trip.tripWhenStart = DateTime(year, month, day);
+          var year_e = int.parse(tripData?['end_date']?.substring(0,4) ?? 'None');
+          var month_e = int.parse(tripData?['end_date']?.substring(5,7) ?? 'None');
+          var day_e = int.parse(tripData?['end_date']?.substring(8,10) ?? 'None');
+          trip.tripWhenEnd = DateTime(year_e, month_e, day_e);
+          print("hello");
+          trip.tripPlace = {};
+          tripData!['trip_place'].forEach((key, value){
+            trip.tripPlace[int.parse(key)] = List<String>.from(value);
+          });
+          trip.tripImage1 = tripData!['image_first'] ?? '';
+          trip.tripImage2 = tripData!['image_second'] ?? '';
+        }
+      }
+      );
+      print(tripData);
     } else {
       print('Failed to load trip data');
     }
@@ -74,6 +104,8 @@ class _ShowTripState extends State<ShowTrip> {
 
   @override
   Widget build(BuildContext context) {
+    print("hahahaha");
+    print(tripData);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -121,7 +153,6 @@ class _ShowTripState extends State<ShowTrip> {
                       top: Radius.circular(15.0),
                     ),
                   ),
-                  // 여기에 자식 위젯을 추가하세요
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 5, horizontal: 30),
                     child: Container(
@@ -147,7 +178,7 @@ class _ShowTripState extends State<ShowTrip> {
                                   children: [
                                     InkWell(
                                       onTap: () {
-                                        print('일지 수정');
+                                        print("눌림");
                                       },
                                       child: Padding(
                                         padding: EdgeInsets.all(8.0),
@@ -160,6 +191,7 @@ class _ShowTripState extends State<ShowTrip> {
                                     InkWell(
                                       onTap: () {
                                         print('일지 삭제');
+                                        _deleteTripData(widget.tripId);
                                       },
                                       child: Padding(
                                         padding: EdgeInsets.all(8.0),

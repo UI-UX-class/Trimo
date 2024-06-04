@@ -3,7 +3,7 @@ const db = require("../config/db.js");
 async function showTrip(req) {
     console.log("Dao In");
     return new Promise((resolve, reject) => {
-        var queryData = `SELECT title, contents, country, domestic, start_date, end_date, time, image_first, image_second, days, trip_place FROM travel WHERE travel_id= 11`;
+        var queryData = `SELECT title, contents, country, domestic, start_date, end_date, time, image_first, image_second, days, trip_place FROM travel WHERE travel_id= ${req.trip_id}`;
         db.query(queryData, (error, db_data) => {
             if (error) {
                 console.error(
@@ -22,7 +22,7 @@ async function showTrip(req) {
 async function recentTrip(req) {
     console.log("Dao In");
     return new Promise((resolve, reject) => {
-        var queryData = `SELECT title, contents, country, domestic, start_date, end_date, time, image_first, image_second, days, trip_place FROM travel WHERE user_id = ${req.user_id} AND time = (SELECT MAX(time) FROM travel WHERE user_id = ${req.user_id})`;
+        var queryData = `SELECT title, contents, country, domestic, start_date, end_date, time, image_first, image_second, days, trip_place FROM travel WHERE user_id = 1 ORDER BY time DESC LIMIT 1`;
         db.query(queryData, (error, db_data) => {
             if (error) {
                 console.error(
@@ -71,7 +71,7 @@ async function getTripById(id) {
                 );
                 reject("DB ERR");
             }
-            resolve(db_data[0]);
+            resolve(db_data);
             console.log("Dao out");
         });
     });

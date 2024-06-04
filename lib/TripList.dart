@@ -1,97 +1,61 @@
-
-
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:trimo/trip.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:intl/intl.dart';
 import 'ShowTrip.dart';
 import 'WriteTrip.dart';
 
 class TripList extends StatefulWidget {
   final int userId;
   final int year;
-  const TripList({super.key, required this.userId, required this.year});
+
+  TripList({required this.userId, required this.year});
+
   @override
-  State<TripList> createState() => _TripListState();
+  _TripListState createState() => _TripListState();
 }
 
 class _TripListState extends State<TripList> {
-  Trip trip = Trip(
-    tripName: "name",
-    tripWhere: "where",
-    isAbroad: false,
-    tripWhenStart: DateTime(2024, 5, 10),
-    tripWhenEnd: DateTime(2024, 5, 13),
-    daysDifference: 3,
-    tripPlace: {
-      1: [""],
-      2: [""],
-    },
-    tripDiary: "",
-    tripImage1: '',
-    tripImage2: '',
-  );
-
-  Map<String,dynamic>? tripData;
+  List trips = [];
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
-    _fetchTripData();
+    _fetchTripList();
   }
 
-  Future<void> _fetchTripData() async {
-    final url = 'http://10.0.2.2:3000/getYearsNote/?user_id=${widget.userId}&year=${widget.year}';
-    final response = await http.get(Uri.parse(url));
+  Future<void> _fetchTripList() async {
+    final url = 'http://10.0.2.2:3000/getYearsNote';
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'user_id': widget.userId,
+        'year': widget.year,
+      }),
+    );
 
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);
       setState(() {
-        tripData = responseBody['Data'];
-        if (tripData != null) {
-          trip.tripName = tripData!['title'] ?? '';
-          trip.tripWhere = tripData!['country'] ?? '';
-          trip.tripDiary = tripData!['contents'] ?? '';
-
-          var year = int.parse(tripData!['start_date']?.substring(0,4) ?? '0');
-          var month = int.parse(tripData!['start_date']?.substring(5,7) ?? '0');
-          var day = int.parse(tripData!['start_date']?.substring(8,10) ?? '0');
-          trip.tripWhenStart = DateTime(year, month, day);
-
-          var year_e = int.parse(tripData!['end_date']?.substring(0,4) ?? '0');
-          var month_e = int.parse(tripData!['end_date']?.substring(5,7) ?? '0');
-          var day_e = int.parse(tripData!['end_date']?.substring(8,10) ?? '0');
-          trip.tripWhenEnd = DateTime(year_e, month_e, day_e);
-
-          trip.tripPlace = {};
-          if (tripData!['trip_place'] != null) {
-            tripData!['trip_place'].forEach((key, value) {
-              trip.tripPlace[int.parse(key)] = List<String>.from(value);
-            });
-          }
-        }
+        trips = responseBody['Data'];
       });
     } else {
-      print('Failed to load trip data');
+      print('Failed to load trip list');
     }
   }
 
+  String formatDate(String dateStr) {
+    // Parse the date string
+    DateTime date = DateTime.parse(dateStr);
+    // Format the date to only show month and day
+    return DateFormat('MM/dd').format(date);
+  }
 
-  @override
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, String>> trips = [
-      {
-        'title': '친구들과 부산여행',
-        'location': '부산',
-        'date': '05.10~05.13',
-        'imagePath': 'assets/busanTest.jpg'
-      }
-    ];
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -162,10 +126,17 @@ class _TripListState extends State<TripList> {
                 child: ListView.builder(
                   itemCount: trips.length,
                   itemBuilder: (context, index) {
+                    String imagePath = trips[index]['image_first'];
+                    File imageFile = File(imagePath);
                     final trip = trips[index];
                     return GestureDetector(
                       onTap: () {
-                        Navigator.pushNamed(context, '/showTrip');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ShowTrip(tripId: trip['travel_id']),
+                          ),
+                        );
                       },
                       child: Card(
                         color: Colors.white,
@@ -178,12 +149,9 @@ class _TripListState extends State<TripList> {
                           padding: EdgeInsets.symmetric(horizontal: 10),
                           child: ListTile(
                             contentPadding: EdgeInsets.zero,
-                            leading: Padding(
-                              padding: EdgeInsets.only(top: 10),
-                              child: trip['imagePath']!.isEmpty // 파일이 존재하는지 확인
-                                  ? Image.file(File(trip['imagePath']!)) // 파일이 존재하면 이미지 출력
-                                  : Icon(Icons.image_not_supported),
-                            ),
+                            leading: imagePath != null && imageFile.existsSync()
+                                ? Image.file(imageFile)
+                                : Icon(Icons.image),
                             title: Text(
                               trip['title'] ?? '',
                               style: TextStyle(
@@ -192,7 +160,7 @@ class _TripListState extends State<TripList> {
                               ),
                             ),
                             subtitle: Text(
-                              "${trip['location']} \n${trip['date']}",
+                              '${trips[index]['country']} \n${formatDate(trips[index]['start_date'])} ~ ${formatDate(trips[index]['end_date'])}',
                               style: TextStyle(fontSize: 12),
                             ),
                             trailing: PopupMenuButton(
