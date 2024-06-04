@@ -24,7 +24,7 @@ const authUtil = {
                 "Status" : 400
             }
         }
-        req.IDX = jwt_token.IDX
+        req.idx = jwt_token.idx
         next()
     }
 }
