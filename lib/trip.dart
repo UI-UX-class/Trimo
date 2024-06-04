@@ -1,5 +1,3 @@
-import 'dart:io';
-
 class Trip {
   String tripName;
   String tripWhere;

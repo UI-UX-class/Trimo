@@ -1,3 +1,7 @@
+
+
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:trimo/trip.dart';
 import 'package:http/http.dart' as http;
@@ -176,11 +180,9 @@ class _TripListState extends State<TripList> {
                             contentPadding: EdgeInsets.zero,
                             leading: Padding(
                               padding: EdgeInsets.only(top: 10),
-                              child: Image.asset(
-                                trip['imagePath']!,
-                                width: 100,
-                                fit: BoxFit.fill,
-                              ),
+                              child: trip['imagePath']!.isEmpty // 파일이 존재하는지 확인
+                                  ? Image.file(File(trip['imagePath']!)) // 파일이 존재하면 이미지 출력
+                                  : Icon(Icons.image_not_supported),
                             ),
                             title: Text(
                               trip['title'] ?? '',
