@@ -17,7 +17,7 @@ app.use('/user', loginRouter);
 app.use('/getnote', tripRouter);
 app.use('/getYearsNote', tripYearRouter);
 app.use('/newnote', postTripRouter);
-//app.use('/delnote', deleteTripRouter);
+app.use('/delnote', deleteTripRouter);
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}/`);
