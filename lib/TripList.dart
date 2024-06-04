@@ -1,81 +1,61 @@
 import 'package:flutter/material.dart';
-import 'package:trimo/trip.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:intl/intl.dart';
 import 'ShowTrip.dart';
+import 'WriteTrip.dart';
 
 class TripList extends StatefulWidget {
   final int userId;
   final int year;
-  const TripList({super.key, required this.userId, required this.year});
+
+  TripList({required this.userId, required this.year});
+
   @override
-  State<TripList> createState() => _TripListState();
+  _TripListState createState() => _TripListState();
 }
 
 class _TripListState extends State<TripList> {
-  Trip trip = Trip(
-    tripName: "name",
-    tripWhere: "where",
-    isAbroad: false,
-    tripWhenStart: DateTime(2024, 5, 10),
-    tripWhenEnd: DateTime(2024, 5, 13),
-    daysDifference: 3,
-    tripPlace: {
-      1: [""],
-      2: [""],
-    },
-    tripDiary: "",
-    tripImage1: '',
-    tripImage2: '',
-  );
-
-  Map<String,dynamic>? tripData;
+  List trips = [];
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
-    _fetchTripData();
+    _fetchTripList();
   }
 
-  Future<void> _fetchTripData() async {
-    final url = 'http://10.0.2.2:3000/getYearsNote/?user_id=${widget.userId}&year=${widget.year}';
-    final response = await http.get(Uri.parse(url));
+  Future<void> _fetchTripList() async {
+    final url = 'http://10.0.2.2:3000/getYearsNote';
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'user_id': widget.userId,
+        'year': widget.year,
+      }),
+    );
 
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);
       setState(() {
-        tripData = responseBody['Data'];
-        trip.tripName = tripData!['title'];
-        trip.tripWhere = tripData!['country'];
-        trip.tripDiary = tripData!['contents'];
-        var year = int.parse(tripData!['start_date'].substring(0,4));
-        var month = int.parse(tripData!['start_date'].substring(5,7));
-        var day = int.parse(tripData!['start_date'].substring(8,10));
-        trip.tripWhenStart = DateTime(year, month, day);
-        var year_e = int.parse(tripData!['end_date'].substring(0,4));
-        var month_e = int.parse(tripData!['end_date'].substring(5,7));
-        var day_e = int.parse(tripData!['end_date'].substring(8,10));
-        trip.tripWhenEnd = DateTime(year_e,month_e,day_e);
-        print(tripData!['trip_place']["1"][0].runtimeType);
-        print("hello");
-        trip.tripPlace = {};
-        tripData!['trip_place'].forEach((key, value){
-          trip.tripPlace[int.parse(key)] = List<String>.from(value);
-        });
+        trips = responseBody['Data'];
       });
     } else {
-      print('Failed to load trip data');
+      print('Failed to load trip list');
     }
+  }
+
+  String formatDate(String dateStr) {
+    // Parse the date string
+    DateTime date = DateTime.parse(dateStr);
+    // Format the date to only show month and day
+    return DateFormat('MM/dd').format(date);
   }
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> trips = [
-      {'id': 11, 'title': 'Trip to Paris'},
-      {'id': 2, 'title': 'Trip to New York'},
-      // 더 많은 항목 추가 가능
-    ];
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -108,7 +88,7 @@ class _TripListState extends State<TripList> {
                         ),
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -130,7 +110,130 @@ class _TripListState extends State<TripList> {
                   ),
                 ),
               ),
-            )
+            ),
+            Container(
+              margin: EdgeInsets.only(left: 25, bottom: 20),
+              child: Text(
+                '여행 일지',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Expanded(
+              child: Scrollbar(
+                child: ListView.builder(
+                  itemCount: trips.length,
+                  itemBuilder: (context, index) {
+                    String imagePath = trips[index]['image_first'];
+                    File imageFile = File(imagePath);
+                    final trip = trips[index];
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ShowTrip(tripId: trip['travel_id']),
+                          ),
+                        );
+                      },
+                      child: Card(
+                        color: Colors.white,
+                        margin: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 18.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(3),
+                          side: BorderSide(color: Colors.black, width: 0.5),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            leading: imagePath != null && imageFile.existsSync()
+                                ? Image.file(imageFile)
+                                : Icon(Icons.image),
+                            title: Text(
+                              trip['title'] ?? '',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            subtitle: Text(
+                              '${trips[index]['country']} \n${formatDate(trips[index]['start_date'])} ~ ${formatDate(trips[index]['end_date'])}',
+                              style: TextStyle(fontSize: 12),
+                            ),
+                            trailing: PopupMenuButton(
+                              itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+                                PopupMenuItem(
+                                  child: Text('수정'),
+                                  value: 'edit',
+                                ),
+                                PopupMenuItem(
+                                  child: Text('삭제'),
+                                  value: 'delete',
+                                ),
+                              ],
+                              onSelected: (value) {
+                                if (value == 'edit') {
+                                  // 수정 로직 추가
+                                } else if (value == 'delete') {
+                                  // 삭제 로직 추가
+                                }
+                              },
+                            ),
+                            isThreeLine: true,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(right: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  SizedBox(height: 10),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        side: BorderSide(color: Colors.indigo, width: 1),
+                        backgroundColor: Colors.white,
+                      ),
+                      onPressed: () {
+                        showModalBottomSheet<void>(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.white,
+                          barrierColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(15.0),
+                            ),
+                            side: BorderSide(
+                              color: Colors.black,
+                              width: 1,
+                            ),
+                          ),
+                          builder: (BuildContext context) {
+                            return WriteTrip();
+                          },
+                        );
+                      },
+                      child: const Text(
+                        "새 일지 생성",
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 40),
+                ],
+              ),
+            ),
           ],
         ),
       ),

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:trimo/ShowTrip.dart';
 import './trip.dart';
 
 enum Location {
@@ -71,25 +72,25 @@ class _WriteTripState extends State<WriteTrip> {
   }
 
   // 이미지 가져오기 함수
-  Future getImageGallery(int index) async {
-    final pickedFile = await picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 80,
-    );
-    setState(() {
-      if (pickedFile != null) {
-        if (index == 1) {
-          _image1 = File(pickedFile.path);
-          image1Path = pickedFile.path;
-        } else {
-          _image2 = File(pickedFile.path);
-          image2Path = pickedFile.path;
-        }
-      } else {
-        print("No Image Picked");
-      }
-    });
-  }
+  // Future getImageGallery(int index) async {
+  //   final pickedFile = await picker.pickImage(
+  //     source: ImageSource.gallery,
+  //     imageQuality: 80,
+  //   );
+  //   setState(() {
+  //     if (pickedFile != null) {
+  //       if (index == 1) {
+  //         _image1 = File(pickedFile.path);
+  //         image1Path = pickedFile.path;
+  //       } else {
+  //         _image2 = File(pickedFile.path);
+  //         image2Path = pickedFile.path;
+  //       }
+  //     } else {
+  //       print("No Image Picked");
+  //     }
+  //   });
+  // }
 
   // 여행 정보 저장 함수
   Future<void> _saveTrip() async {
@@ -109,15 +110,24 @@ class _WriteTripState extends State<WriteTrip> {
     var uri = "http://10.0.2.2:3000/newnote";
     try {
       var body = json.encode(newTrip.toJson());
-      print(body);
+
       var response = await http.post(
         Uri.parse(uri),
         headers: {"Content-Type": "application/json"},
         body: body,
       );
-      if (response.statusCode == 200) {
+      print("확인절차 확인절차 확인절차");
+      print(response.body);
+      if (response.statusCode == 201) {
         print('데이터 저장 성공');
-        Navigator.pushReplacementNamed(context, '/showTrip');
+        final responseBody = jsonDecode(response.body);
+        print(responseBody);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ShowTrip(tripId: responseBody['Data'],),
+          ),
+        );
       } else {
         print('데이터 저장 실패: ${response.statusCode}');
         print('응답 내용: ${response.body}');
@@ -372,54 +382,74 @@ class _WriteTripState extends State<WriteTrip> {
                         Expanded(
                           flex: 1,
                           child: InkWell(
-                              onTap: () async {
-                                XFile? pickedImage = await picker.pickImage(source: ImageSource.gallery);
-                                if (pickedImage != null) {
-                                  setState(() {
-                                    getImageGallery(1);
-                                  });
+                            onTap: () async {
+                              final pickedFile = await picker.pickImage(
+                                source: ImageSource.gallery,
+                                imageQuality: 80,
+                              );
+                              setState(() {
+                                if (pickedFile != null) {
+                                  _image1 = File(pickedFile.path);
+                                  image1Path = pickedFile.path;
+                                } else {
+                                  print("No Image Picked");
                                 }
-                              },
-                              child: Container(
-                                  height: 180,
-                                  color: Color(0xFFEAEBF2),
-                                  child: _image1 != null
-                                      ? Image.file(
-                                    _image1!.absolute,
-                                    fit: BoxFit.cover,
-                                  )
-                                      :Center(
-                                    child: Icon(Icons.add_photo_alternate_outlined, size: 30, color: Colors.grey,),
-                                  )
+                              });
+                            },
+                            child: Container(
+                              height: 180,
+                              color: Color(0xFFEAEBF2),
+                              child: _image1 != null
+                                  ? Image.file(
+                                _image1!.absolute,
+                                fit: BoxFit.cover,
                               )
+                                  : Center(
+                                child: Icon(
+                                  Icons.add_photo_alternate_outlined,
+                                  size: 30,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                        SizedBox(width: 10,),
                         Expanded(
                           flex: 1,
                           child: InkWell(
-                              onTap: () async {
-                                XFile? pickedImage = await picker.pickImage(source: ImageSource.gallery);
-                                if (pickedImage != null) {
-                                  setState(() {
-                                    getImageGallery(2);
-                                  });
+                            onTap: () async {
+                              final pickedFile = await picker.pickImage(
+                                source: ImageSource.gallery,
+                                imageQuality: 80,
+                              );
+                              setState(() {
+                                if (pickedFile != null) {
+                                  _image2 = File(pickedFile.path);
+                                  image2Path = pickedFile.path;
+                                } else {
+                                  print("No Image Picked");
                                 }
-                              },
-                              child: Container(
-                                  height: 180,
-                                  color: Color(0xFFEAEBF2),
-                                  child: _image2 != null
-                                      ? Image.file(
-                                    _image2!.absolute,
-                                    fit: BoxFit.cover,
-                                  )
-                                      :Center(
-                                    child: Icon(Icons.add_photo_alternate_outlined, size: 30, color: Colors.grey,),
-                                  )
+                              });
+                            },
+                            child: Container(
+                              height: 180,
+                              color: Color(0xFFEAEBF2),
+                              child: _image2 != null
+                                  ? Image.file(
+                                _image2!.absolute,
+                                fit: BoxFit.cover,
                               )
+                                  : Center(
+                                child: Icon(
+                                  Icons.add_photo_alternate_outlined,
+                                  size: 30,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
+
                       ],
                     )
                   ],
