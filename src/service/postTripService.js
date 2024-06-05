@@ -14,7 +14,7 @@ async function postTrip(data) {
         const minutes = String(now.getMinutes());
         const seconds = String(now.getSeconds());
 
-        const postData = {
+        const postData = {  //따옴표가 없는데?
             user_id : 1,
             trip_place : detailsJSON,
             time : `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`

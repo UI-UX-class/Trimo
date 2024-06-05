@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -23,12 +23,21 @@ class SignIn extends StatefulWidget {
 class _SignIn extends State<SignIn> {
   late final TextEditingController _idController;
   late final TextEditingController _passwordController;
+  late SharedPreferences _prefs; //저장소 객체
 
   @override
   void initState(){
     super.initState();
     _idController = TextEditingController();
     _passwordController = TextEditingController();
+    // 앱을 처음부터 실행시킬때마다 로그인을 다시 해야하기 위해서는 토큰을 없애줘야 함
+    // 이 부분은 나중에 주석 풀기
+    _initSharedPreferences();
+  }
+
+  // 저장소 초기화 하는 객체
+  Future<void> _initSharedPreferences() async {
+    _prefs = await SharedPreferences.getInstance();
   }
 
   Future<void> _signIn() async{
@@ -49,6 +58,13 @@ class _SignIn extends State<SignIn> {
       );
       if(response.statusCode == 200){
         final responseBody = jsonDecode(response.body);
+        final jwt_token = responseBody['Data'];
+        //print('로그인 시 리스폰스 바디 출력');
+        //print(responseBody);
+        //print(jwt_token);
+        _prefs.setString('jwt_token', jwt_token);
+        print('jwt token 확인');
+        print(_prefs.getString('jwt_token'));
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
