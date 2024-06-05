@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import './SignUp.dart';
 import './main.dart';
@@ -17,8 +21,47 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignIn extends State<SignIn> {
-  final TextEditingController _idController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  late final TextEditingController _idController;
+  late final TextEditingController _passwordController;
+
+  @override
+  void initState(){
+    super.initState();
+    _idController = TextEditingController();
+    _passwordController = TextEditingController();
+  }
+
+  Future<void> _signIn() async{
+    final id = _idController.text;
+    final pwd = _passwordController.text;
+    final info = {
+      'id' : id,
+      'password' : pwd
+    };
+
+    var url = "http://10.0.2.2:3000/user/login";
+    try{
+      var body = json.encode(info);
+      var response = await http.post(
+        Uri.parse(url),
+        headers: {"Content-Type": "application/json"},
+        body: body,
+      );
+      if(response.statusCode == 200){
+        final responseBody = jsonDecode(response.body);
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => MainPage(user_id: 1,))
+        );
+      }else{
+        print('데이터 저장 실패: ${response.statusCode}');
+        print('응답 내용: ${response.body}');
+      }
+    }catch(e){
+      print("오류 발생: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,6 +146,9 @@ class _SignIn extends State<SignIn> {
                                         width: 270,
                                         child: TextField(
                                           controller: _idController,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
+                                          ],
                                           decoration: InputDecoration(
                                             border: InputBorder.none,
                                             hintText: 'ID',
@@ -140,6 +186,9 @@ class _SignIn extends State<SignIn> {
                                         width: 270,
                                         child: TextField(
                                           controller: _passwordController,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
+                                          ],
                                           decoration: InputDecoration(
                                             border: InputBorder.none,
                                             hintText: 'Password',
@@ -171,10 +220,10 @@ class _SignIn extends State<SignIn> {
                               ),
                             ),
                             onPressed: () {
-                              String id = _idController.text;
-                              String password = _passwordController.text;
-                              print('ID: $id, Password: $password');
-                              Navigator.pushNamed(context, '/mainPage');
+                              _signIn();
+                              // String id = _idController.text;
+                              // String password = _passwordController.text;
+                              // print('ID: $id, Password: $password');
                             },
                             child: Text(
                               "Login",

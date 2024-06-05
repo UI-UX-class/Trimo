@@ -4,10 +4,10 @@ const loginService = require('../service/loginService');
 const authUtil = require('../middlewares/auth');
 const jwt = require('../util/jwt');
 
-router.get('/login', async(req, res) => {
+router.post('/login', async(req, res) => {
     console.log("login router");
     try {
-        const loginData = await loginService.login(req.query);
+        const loginData = await loginService.login(req.body);
         const token = loginData.jwt_token
         //console.log("확인", token);
         res.cookie('token')

@@ -70,9 +70,11 @@ class _TripListYearState extends State<TripListYear> {
                       angle: index % 2 == 0 ? -0.02 : 0.02,
                       child: GestureDetector(
                         onTap: () {
+                          var itemData = trips[index];
+                          print(itemData['year']);
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => TripList(userId: 1,year: 2024)),
+                            MaterialPageRoute(builder: (context) => TripList(userId: 1,year: int.parse(itemData['year']!))),
                           );
                         },
                         child: Padding(

@@ -39,7 +39,7 @@ class _ShowTripState extends State<ShowTrip> {
     _fetchTripData();
   }
 
-  Future<void> _deleteTripData(travel_id) async{
+  Future<void> _deleteTripData(travel_id) async {
     final url = 'http://10.0.2.2:3000/deleteTrip';
     final response = await http.post(
         Uri.parse(url),

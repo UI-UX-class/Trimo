@@ -27,12 +27,13 @@ class _SignUp extends State<SignUp> {
   late ScrollController _scrollController;
   int _selectedAvatarIndex = -1; // 선택된 이미지의 인덱스를 저장
   String _selectedAvatarPath = '';
+  List<String> avaterPath = ["assets/avatar1.png","assets/avatar2.png", "assets/avatar3.png", "assets/avatar4.png"];
 
   // TextEditingController 선언
-  TextEditingController _nicknameController = TextEditingController();
-  TextEditingController _idController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
+  late final TextEditingController _nicknameController;
+  late final TextEditingController _idController;
+  late final TextEditingController _passwordController;
+  late final TextEditingController _emailController;
 
   @override
   Widget build(BuildContext context) {
@@ -344,6 +345,11 @@ class _SignUp extends State<SignUp> {
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
+    _idController = TextEditingController();
+    _passwordController = TextEditingController();
+    _emailController = TextEditingController();
+    _nicknameController = TextEditingController();
     _scrollController = ScrollController();
   }
 

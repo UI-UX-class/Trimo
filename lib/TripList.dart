@@ -102,7 +102,7 @@ class _TripListState extends State<TripList> {
                   end: Alignment.bottomRight,
                 ).createShader(bounds),
                 child: Text(
-                  '>2024',
+                  widget.year.toString(),
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
