@@ -1,10 +1,11 @@
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import './SignUp.dart';
 import './main.dart';
+import './prefs.dart';
 
 class SignInTest extends StatelessWidget {
   @override
@@ -23,7 +24,8 @@ class SignIn extends StatefulWidget {
 class _SignIn extends State<SignIn> {
   late final TextEditingController _idController;
   late final TextEditingController _passwordController;
-  late SharedPreferences _prefs; //저장소 객체
+  final SetPrefs _prefs = SetPrefs();
+  String _jwtToken = '';
 
   @override
   void initState(){
@@ -32,13 +34,38 @@ class _SignIn extends State<SignIn> {
     _passwordController = TextEditingController();
     // 앱을 처음부터 실행시킬때마다 로그인을 다시 해야하기 위해서는 토큰을 없애줘야 함
     // 이 부분은 나중에 주석 풀기
-    _initSharedPreferences();
+    _initializePreferences();
   }
 
-  // 저장소 초기화 하는 객체
-  Future<void> _initSharedPreferences() async {
-    _prefs = await SharedPreferences.getInstance();
+  // 저장소 초기화 하는 함수
+  Future<void> _initializePreferences() async {
+    await _prefs.initSharedPreferences();
+    String? token = _prefs.getJwtToken();
+    if (token != null) {
+      setState(() {
+        _jwtToken = token;
+      });
+    }
   }
+
+  // 토큰 저장하는 함수
+  Future<void> _saveToken(String token) async {
+    await _prefs.setJwtToken(token);
+    setState(() {
+      _jwtToken = token;
+    });
+  }
+
+  // 토큰 불러오는 함수
+  Future<void> _loadToken() async {
+    String? token = _prefs.getJwtToken();
+    if (token != null) {
+      setState(() {
+        _jwtToken = token;
+      });
+    }
+  }
+
 
   Future<void> _signIn() async{
     final id = _idController.text;
@@ -59,12 +86,9 @@ class _SignIn extends State<SignIn> {
       if(response.statusCode == 200){
         final responseBody = jsonDecode(response.body);
         final jwt_token = responseBody['Data'];
-        //print('로그인 시 리스폰스 바디 출력');
-        //print(responseBody);
-        //print(jwt_token);
-        _prefs.setString('jwt_token', jwt_token);
+        _saveToken(jwt_token);
         print('jwt token 확인');
-        print(_prefs.getString('jwt_token'));
+        print(_prefs.getJwtToken());
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(

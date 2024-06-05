@@ -12,6 +12,7 @@ import './SignUp.dart';
 import './ChangeAccountInfo.dart';
 import './ShowTrip.dart';
 import './WriteTrip.dart';
+import './prefs.dart';
 import 'package:http/http.dart' as http;
 
 void main() {
@@ -60,11 +61,56 @@ class _MainPageState extends State<MainPage> {
   int travel_id = 0;
   String start_date = '';
   String end_date = '';
+  final SetPrefs _prefs = SetPrefs();
+  String _jwtToken = '';
 
   @override
   void initState() {
     super.initState();
     _fetchMain();
+    //객체 초기화
+    _initializePreferences();
+    _loadToken();
+  }
+  
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.detached) {
+      _deleteToken();
+      _loadToken();
+    }
+  }
+  // 토큰 함수
+  Future<void> _initializePreferences() async {
+    await _prefs.initSharedPreferences();
+    String? token = _prefs.getJwtToken();
+    if (token != null) {
+      setState(() {
+        _jwtToken = token;
+      });
+    }
+  }
+  Future<void> _loadToken() async {
+    String? token = _prefs.getJwtToken();
+    print('__load Token__');
+    print(token);
+    if (token != null) {
+      setState(() {
+        _jwtToken = token;
+      });
+    }
+  }
+  Future<void> _saveToken(String token) async {
+    await _prefs.setJwtToken(token);
+    setState(() {
+      _jwtToken = token;
+    });
+  }
+  Future<void> _deleteToken() async {
+    await _prefs.removeJwtToken();
+    setState(() {
+      _jwtToken = '';
+    });
   }
 
   final List<String> bannerList = [
