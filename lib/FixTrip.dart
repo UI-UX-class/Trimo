@@ -50,6 +50,7 @@ class _FixTripState extends State<FixTrip> {
   int _setIndex = 1; // 1일차, 2일차 구분하는 index
   Location _selectedLocation = Location.domestic; // 변수 초기화
   Map<int, List<String>> _tripPlace = {}; // 1일차 장소, 2일차 장소 자료 구조
+  String anyString = '';
 
   final picker = ImagePicker();
   File? _image1;
@@ -60,16 +61,16 @@ class _FixTripState extends State<FixTrip> {
   @override
   void initState() {
     super.initState();
+    _initializeControllers();
+    _fetchTripData();
+  }
+
+  void _initializeControllers() {
     _tripNameController = TextEditingController();
     _tripWhereController = TextEditingController();
     _startDateController = TextEditingController();
     _endDateController = TextEditingController();
     _tripDiaryController = TextEditingController();
-    _updateDaysDifference();
-    _tripPlace = Map.from(trip.tripPlace);
-    image1Path = trip.tripImage1;
-    image2Path = trip.tripImage2;
-    _fetchTripData();
   }
 
   // 일차 추가 함수
@@ -118,6 +119,7 @@ class _FixTripState extends State<FixTrip> {
             tripData = responseBody['Data'] as Map<String, dynamic>?;
           }
         }
+
         if (tripData != null) {
           trip.tripName = tripData!['title'] ?? 'Default Trip Name';
           trip.tripWhere = tripData!['country'] ?? 'Default Country';
@@ -130,18 +132,22 @@ class _FixTripState extends State<FixTrip> {
             trip.tripWhenStart = DateTime.parse(startDate);
             trip.tripWhenEnd = DateTime.parse(endDate);
 
-            // 날짜를 원하는 형식으로 변환하여 문자열로 할당
             _startDateController.text = "${trip.tripWhenStart.year}-${trip.tripWhenStart.month.toString().padLeft(2, '0')}-${trip.tripWhenStart.day.toString().padLeft(2, '0')}";
             _endDateController.text = "${trip.tripWhenEnd.year}-${trip.tripWhenEnd.month.toString().padLeft(2, '0')}-${trip.tripWhenEnd.day.toString().padLeft(2, '0')}";
           }
 
           trip.tripPlace = {};
-          tripData!['trip_place'].forEach((key, value){
+          tripData!['trip_place'].forEach((key, value) {
             trip.tripPlace[int.parse(key)] = List<String>.from(value);
           });
 
+          print(tripData);
+
           trip.tripImage1 = tripData!['image_first'] ?? '';
           trip.tripImage2 = tripData!['image_second'] ?? '';
+
+          image1Path = trip.tripImage1;
+          image2Path = trip.tripImage2;
 
           _image1 = File(trip.tripImage1);
           _image2 = File(trip.tripImage2);
@@ -151,8 +157,10 @@ class _FixTripState extends State<FixTrip> {
           _tripDiaryController.text = trip.tripDiary;
 
           _daysDifference = trip.daysDifference;
-        }
 
+          // 업데이트된 tripPlace 맵을 _tripPlace에 반영
+          _tripPlace = Map.from(trip.tripPlace);
+        }
       });
     } else {
       print('Failed to load trip data');
@@ -174,11 +182,11 @@ class _FixTripState extends State<FixTrip> {
       tripImage2: image2Path,
     );
 
-    var uri = "http://10.0.2.2:3000/newnote";
+    var uri = "http://10.0.2.2:3000/updatenote/${widget.tripId}";
     try {
       var body = json.encode(newTrip.toJson());
-
-      var response = await http.post(
+      print(body);
+      var response = await http.put(
         Uri.parse(uri),
         headers: {"Content-Type": "application/json"},
         body: body,
@@ -189,7 +197,7 @@ class _FixTripState extends State<FixTrip> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => ShowTrip(tripId: responseBody['Data']),
+            builder: (context) => ShowTrip(tripId: widget.tripId),
           ),
         );
       } else {
@@ -340,85 +348,88 @@ class _FixTripState extends State<FixTrip> {
                 itemCount: _tripPlace.length, // 저장된 일차 개수 확인해서 출력.
                 itemBuilder: (context, index) {
                   int day = index + 1;
+                  List<String> places = _tripPlace[day] ?? []; // 기본값을 빈 리스트로 설정
                   return Container(
-                      margin: EdgeInsets.symmetric(vertical: 10),
-                      color: Color(0xFFEAEBF2),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('$day일차', style: TextStyle(fontWeight: FontWeight.bold),),
-                            Text('여행 장소', style: TextStyle(color: Colors.black38, fontSize: 12),),
-                            ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: _tripPlace[day]!.length,
-                              itemBuilder: (context, index2) {
-                                return Row(
-                                  children: [
-                                    Expanded(
-                                      child: Container(
-                                        height: 35,
-                                        child: TextFormField(
-                                          initialValue:_tripPlace[day]![index].toString() ?? "안녕",
-                                          decoration: InputDecoration(
-                                            hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
-                                            border: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(5),
-                                              borderSide: BorderSide(color: Colors.grey, width: 1),
-                                            ),
-                                            filled: true,
-                                            fillColor: Colors.white,
-                                            contentPadding: EdgeInsets.only(left: 10),
+                    margin: EdgeInsets.symmetric(vertical: 10),
+                    color: Color(0xFFEAEBF2),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('$day일차', style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text('여행 장소', style: TextStyle(color: Colors.black38, fontSize: 12)),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: places.length,
+                            itemBuilder: (context, index2) {
+                              return Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      height: 35,
+                                      child: TextFormField(
+                                        initialValue: places[index2], // index2로 변경
+                                        decoration: InputDecoration(
+                                          hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(5),
+                                            borderSide: BorderSide(color: Colors.grey, width: 1),
                                           ),
-                                          onChanged: (text) {
-                                            setState(() {
-                                              _tripPlace[day]![index2] = text;
-                                            });
-                                          },
+                                          filled: true,
+                                          fillColor: Colors.white,
+                                          contentPadding: EdgeInsets.only(left: 10),
                                         ),
+                                        onChanged: (text) {
+                                          setState(() {
+                                            places[index2] = text; // index2로 변경
+                                          });
+                                        },
                                       ),
                                     ),
-                                    IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          _tripPlace[day]!.removeAt(index2);
-                                        });
-                                      },
-                                      icon: Icon(Icons.delete_forever_rounded),
-                                    ),
-                                  ],
-                                );
-                              },
-                            ),
-                            Container(
-                              height: 35,
-                              margin: EdgeInsets.only(top: 5),
-                              child: SizedBox(
-                                width: double.infinity, // 버튼이 가능한 넓게 퍼지도록 설정
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _tripPlace[day]!.add("");
-                                    });
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.zero, // 모서리를 각지게 설정
-                                    ),
                                   ),
-                                  child: Icon(Icons.add),
+                                  IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        places.removeAt(index2); // index2로 변경
+                                      });
+                                    },
+                                    icon: Icon(Icons.delete_forever_rounded),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                          Container(
+                            height: 35,
+                            margin: EdgeInsets.only(top: 5),
+                            child: SizedBox(
+                              width: double.infinity, // 버튼이 가능한 넓게 퍼지도록 설정
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    places.add("");
+                                  });
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.zero,
+                                  ),
                                 ),
+                                child: Icon(Icons.add),
                               ),
                             ),
-                          ],
-                        ),
-                      )
+                          ),
+                        ],
+                      ),
+                    ),
                   );
                 },
               ),
+
+
               // 일차 추가 기능.
               Container(
                 height: MediaQuery.of(context).size.height * 0.05,
@@ -555,7 +566,7 @@ class _FixTripState extends State<FixTrip> {
                     ),
                     child: Center(
                       child: Text(
-                        '만들기',
+                        '수정하기',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,

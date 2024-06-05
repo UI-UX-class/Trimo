@@ -1,11 +1,12 @@
 var express = require("express");
 const router = express.Router();
-const postTripService = require("../service/postTripService")
+const updateTripService = require("../service/updateTripService")
 
 //여행 내용 post
-router.post("/:id", async (req,res) => {
+router.put("/:id", async (req,res) => {
+    console.log("라우터 들어옴");
     try{
-        const result = await postTripService.postTrip(req.body);
+        const result = await updateTripService.updateTrip(req.body, req.params.id);
         res.status(201).json(result);
         console.log(result);
     } catch(err){
@@ -13,4 +14,5 @@ router.post("/:id", async (req,res) => {
         res.status(400).json({message: err.message});
     }
 })
+
 module.exports = router;
