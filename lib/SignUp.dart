@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:trimo/SignIn.dart';
 
 // Test Main
@@ -22,18 +24,52 @@ class SignUp extends StatefulWidget {
   }
 }
 
-// Design
 class _SignUp extends State<SignUp> {
   late ScrollController _scrollController;
   int _selectedAvatarIndex = -1; // 선택된 이미지의 인덱스를 저장
   String _selectedAvatarPath = '';
-  List<String> avaterPath = ["assets/avatar1.png","assets/avatar2.png", "assets/avatar3.png", "assets/avatar4.png"];
+  //List<String> avaterPath = ["assets/avatar1.png","assets/avatar2.png", "assets/avatar3.png", "assets/avatar4.png"];
 
   // TextEditingController 선언
   late final TextEditingController _nicknameController;
   late final TextEditingController _idController;
   late final TextEditingController _passwordController;
   late final TextEditingController _emailController;
+
+  Future<void> _signUp() async {
+    final info = {
+      'nickname' : _nicknameController.text,
+      'id' : _idController.text,
+      'password' : _passwordController.text,
+      'email' : _emailController.text,
+      'pfImg_id' : _selectedAvatarIndex
+    };
+
+    var url = "http://10.0.2.2:3000/user/signup";
+    try {
+      var body = json.encode(info);
+      print('회원가입 바디 찍어볼거임');
+      print(body);
+      print('\n\n');
+      var response = await http.post(
+        Uri.parse(url),
+        headers: {"Content-Type" : "application/json"},
+        body : body
+      );
+      if(response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(
+                builder: (context) => SignIn())
+        ); //이렇게 해도 되나
+      } else {
+        print('데이터 저장 실패 : ${response.statusCode}');
+        print('응답 내용 : ${response.body}');
+    }
+    } catch(e) {
+      print("sign Up 오류 발생 : $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -293,11 +329,7 @@ class _SignUp extends State<SignUp> {
                   ),
                 ),
                 onPressed: () {
-                  String nick_name = _nicknameController.text;
-                  String id = _idController.text;
-                  String password = _passwordController.text;
-                  String email = _emailController.text;
-                  Navigator.pushNamed(context, '/mainPage');
+                  _signUp();
                 }, // 로그인 기능과 연결
                 child: Text(
                   "Join",
