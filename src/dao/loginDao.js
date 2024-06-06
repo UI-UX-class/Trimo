@@ -1,3 +1,4 @@
+const { query } = require('express');
 const db = require('../config/db')
 
 function findId(req) {
@@ -7,7 +8,6 @@ function findId(req) {
         db.query(queryData, (error, db_data) => {
             if(error){
                 console.error(queryData + "\n" + "find ID DB Error [user]");
-                console.log(error);
                 reject("DB ERR")
             }
             else if(!db_data.length) {
@@ -76,6 +76,20 @@ function signUp_token(req) {
     })
 }
 
+function getUser(req) {
+    return new Promise((resolve, reject) => {
+        var queryData = `select nickname, id, password, email, pfImg_id from user where user_id = ${req.user_id}`;
+        db.query(queryData, (error, db_data) => {
+            if(error) {
+                console.error(queryData + "\n" + "getUser DB Error [user]");
+                reject("DB ERR")
+            } else {
+                resolve(db_data);
+            }
+        })
+    })
+}
+
 function editUser(idx, req) {
     return new Promise((resolve, reject) => {
         var queryData = `update user set nickname = '${req.nickname}', password = '${req.password}', 
@@ -113,6 +127,7 @@ module.exports = {
     login,
     signUp,
     signUp_token,
+    getUser,
     editUser,
     deleteUser
 }

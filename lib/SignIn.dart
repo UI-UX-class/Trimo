@@ -89,6 +89,7 @@ class _SignIn extends State<SignIn> {
         _saveToken(jwt_token);
         print('jwt token 확인');
         print(_prefs.getJwtToken());
+        //Navigator.pushNamed(context, '/mainPage', arguments: {'user_id' : 1});
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(

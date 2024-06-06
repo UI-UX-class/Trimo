@@ -91,6 +91,32 @@ async function signUp(req){
     }
 }
 
+async function getUser(req) {
+    console.log('edit get user service', req);
+    try {
+        if(!req) {
+            return {
+                "Message" : "요청값이 없습니다.",
+                "Status" : 406
+            }
+        }
+        const getUser_data = await loginDao.getUser(req);
+        console.log('getUser 확인', getUser_data);
+        return {
+            "Message" : "성공",
+            "Data" : getUser_data,
+            "Status" : 200
+        }
+    }
+    catch (err) {
+        return {
+            "Message" : "실패",
+            "Status" : 400,
+            "Error" : err
+        }
+    }
+}
+
 async function editUser(idx, req) {
     console.log('edit user service', idx, req);
     try {
@@ -129,7 +155,7 @@ async function deleteUser(idx) {
         const deleteUser = await loginDao.deleteUser(idx);
         return {
             "Message" : "성공",
-            "Status" : 200
+            "Status" : 200,
         }
     }
     catch(err){
@@ -145,6 +171,7 @@ async function deleteUser(idx) {
 module.exports = {
     login,
     signUp,
+    getUser,
     editUser,
     deleteUser
 }

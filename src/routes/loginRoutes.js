@@ -29,6 +29,17 @@ router.post('/signup', async(req, res) => {
     }
 })
 
+router.post('/edit', async(req, res) => {
+    console.log('edit get user router', req.body);
+    try {
+        const getUser_data = await loginService.getUser(req.body);
+        res.status(getUser_data.Status).json(getUser_data);
+    } catch(err) {
+        console.log(err);
+        res.status(400).json({message : err.message});
+    }
+})
+
 router.put('/edit', authUtil.checkToken, async(req, res) => {
     console.log("edit user router", req.body);
     const jwt_token = req.headers.jwt_token;
