@@ -12,12 +12,14 @@ const tripRouter = require('./routes/showTripRoutes');
 const tripYearRouter = require('./routes/showTripYearRoutes');
 const postTripRouter = require('./routes/postTripRoutes');
 const deleteTripRouter = require('./routes/deleteTripRoutes');
+const updateTripRouter = require('./routes/updateTripRoutes');
 
 app.use('/user', loginRouter);
 app.use('/getnote', tripRouter);
 app.use('/getYearsNote', tripYearRouter);
 app.use('/newnote', postTripRouter);
 app.use('/delnote', deleteTripRouter);
+app.use('/updatenote', updateTripRouter);
 app.use('/main',tripRouter);
 
 app.listen(port, () => {
