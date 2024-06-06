@@ -154,11 +154,36 @@ async function deleteUser(idx) {
     }
 }
 
+async function getProfile(idx) {
+    console.log('get profile service', idx);
+    try {
+        if(!idx) {
+            return {
+                "Message" : "id가 없습니다.",
+                "Status" : 406
+            }
+        }
+        const getProfile_data = await loginDao.getProfile(idx);
+        return {
+            "Message" : "성공",
+            "Data" : getProfile_data,
+            "Status" : 200
+        }
+    }
+    catch(err){
+        return {
+            "Message" : "실패",
+            "Status" : 400,
+            "Error" : err
+        }
+    }
+}
 
 module.exports = {
     login,
     signUp,
     getUser,
     editUser,
-    deleteUser
+    deleteUser,
+    getProfile
 }

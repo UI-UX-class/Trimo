@@ -67,7 +67,19 @@ router.delete('/withdraw', jwt.authUtil.checkToken, async(req, res) => {
         console.log(err);
         res.status(400).json({message : err.message});
     }
-    //탈퇴 시 토큰 파괴...
+})
+
+router.post('/profile', jwt.authUtil.checkToken, async(req, res) => {
+    const jwt_token = req.headers.jwt_token;
+    const token = await jwt.verify(jwt_token);
+    console.log("토큰 verify 확인 : ", token.idx);
+    try {
+        const profile_data = await loginService.getProfile(token.idx);
+        res.status(profile_data.Status).json(profile_data);
+    } catch(err) {
+        console.log(err);
+        res.status(400).json({message : err.message});
+    }
 })
 
 module.exports = router;
