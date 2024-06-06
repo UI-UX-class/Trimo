@@ -34,19 +34,20 @@ router.post('/edit', async(req, res) => {
     try {
         const getUser_data = await loginService.getUser(req.body);
         res.status(getUser_data.Status).json(getUser_data);
+        console.log(getUser_data);
     } catch(err) {
         console.log(err);
         res.status(400).json({message : err.message});
     }
 })
 
-router.put('/edit', authUtil.checkToken, async(req, res) => {
-    console.log("edit user router", req.body);
-    const jwt_token = req.headers.jwt_token;
-    const token = await jwt.verify(jwt_token);
-    console.log("토큰 verify 확인 : ", token);
+router.put('/edit', async(req, res) => {
+//    console.log("edit user router", req.body);
+//    const jwt_token = req.headers.jwt_token;
+//    const token = await jwt.verify(jwt_token);
+//    console.log("토큰 verify 확인 : ", token);
     try {
-        const editUser_data = await loginService.editUser(token.idx, req.body);
+        const editUser_data = await loginService.editUser(req.body);
         res.status(editUser_data.Status).json(editUser_data);
     } catch(err) {
         console.log(err);

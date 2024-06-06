@@ -42,18 +42,26 @@ class ChangeInfoState extends State<_ChangeInfo> {
 
   // 페이지 들어오면 초기값 get
   Future<void> _fetchUserData() async {
-    final url = 'http://10.0.2.2:3000/user/get';
-    final response = await http.get(Uri.parse(url));
+    const user_id = 1;
+    final uri = 'http://10.0.2.2:3000/user/edit';
+    final body = jsonEncode({
+      'user_id': user_id,
+    });
+    var response = await http.post(
+      Uri.parse(uri),
+      headers: {"Content-Type": "application/json"},
+      body: body,
+    );
 
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);
-
+      print(responseBody["Data"][0]);
       setState(() {
-        _nicknameController.text = responseBody['nick_name'] ?? '';
-        _idController.text = responseBody['id'] ?? '';
-        _passwordController.text = responseBody['password'] ?? '';
-        _emailController.text = responseBody['email'] ?? '';
-        _selectedAvatarIndex = responseBody['pfImg_id'] ?? 0;
+        _nicknameController.text = responseBody["Data"][0]["nickname"] ?? '안녕';
+        _idController.text = responseBody["Data"][0]["id"] ?? '';
+        _passwordController.text = responseBody["Data"][0]["password"] ?? '';
+        _emailController.text = responseBody["Data"][0]["email"] ?? '';
+        _selectedAvatarIndex = responseBody["Data"][0]["pfImg_id"] ?? 0;
       });
     } else {
       print('Failed to load user data');
@@ -62,7 +70,7 @@ class ChangeInfoState extends State<_ChangeInfo> {
 
   // 버튼 누를 때 회원 정보 put
   Future<void> _updateUser() async {
-    String nick_name = _nicknameController.text;
+    String nickname = _nicknameController.text;
     String id = _idController.text;
     String password = _passwordController.text;
     String email = _emailController.text;
@@ -71,11 +79,12 @@ class ChangeInfoState extends State<_ChangeInfo> {
     var uri = "http://10.0.2.2:3000/user/edit";
     try {
       var body = json.encode({
-        'nick_name': nick_name,
+        'nickname': nickname,
         'id': id,
         'password': password,
         'email': email,
         'pfImg_id': pfImg_id,
+        'user_id' : 1
       });
       print(body);
       var response = await http.put(
@@ -85,7 +94,6 @@ class ChangeInfoState extends State<_ChangeInfo> {
       );
 
       if (response.statusCode == 200) {
-        final responseBody = jsonDecode(response.body);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -105,7 +113,7 @@ class ChangeInfoState extends State<_ChangeInfo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         scrolledUnderElevation: 0,
