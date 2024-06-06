@@ -37,6 +37,7 @@ class ChangeInfoState extends State<_ChangeInfo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
@@ -147,19 +148,19 @@ class ChangeInfoState extends State<_ChangeInfo> {
                           //color: Colors.white,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
-                            color: Colors.white,
+                            color: Colors.white54,
                           ),
                           child: SizedBox(
                             height: 30,
                             width: 270,
-                            child:TextField(
-                              controller: _idController,
-                              decoration: InputDecoration(
-                                hintText: 'ID',
-                                contentPadding: EdgeInsets.all(8),
-                                border: InputBorder.none,
+                            child:Padding(
+                              padding: EdgeInsets.only(top: 3, left: 8),
+                              child:Text('hoseo1234', style: TextStyle(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black
                               ),
-                            ),
+                              ),),
                           ),
                         ),),
                       Align(
