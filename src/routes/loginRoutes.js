@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 const loginService = require('../service/loginService');
-const authUtil = require('../middlewares/auth');
 const jwt = require('../util/jwt');
 
 router.post('/login', async(req, res) => {
@@ -9,8 +8,8 @@ router.post('/login', async(req, res) => {
     try {
         const loginData = await loginService.login(req.body);
         const token = loginData.jwt_token
-        //console.log("확인", token);
-        res.cookie('token')
+        console.log("확인", token);
+        res.cookie('token') //내가 한건가??
         res.status(loginData.Status).json(loginData);
     } catch (err) {
         console.log(err);
@@ -29,25 +28,27 @@ router.post('/signup', async(req, res) => {
     }
 })
 
-router.post('/edit', async(req, res) => {
-    console.log('edit get user router', req.body);
+router.post('/edit', jwt.authUtil.checkToken, async(req, res) => {
+    const jwt_token = req.headers.jwt_token;
+    const token = await jwt.verify(jwt_token);
+    console.log("토큰 verify 확인 : ", token.idx);
+    console.log('edit get user router', token.idx);
     try {
-        const getUser_data = await loginService.getUser(req.body);
+        const getUser_data = await loginService.getUser(token.idx);
         res.status(getUser_data.Status).json(getUser_data);
-        console.log(getUser_data);
     } catch(err) {
         console.log(err);
         res.status(400).json({message : err.message});
     }
 })
 
-router.put('/edit', async(req, res) => {
-//    console.log("edit user router", req.body);
-//    const jwt_token = req.headers.jwt_token;
-//    const token = await jwt.verify(jwt_token);
-//    console.log("토큰 verify 확인 : ", token);
+router.put('/edit', jwt.authUtil.checkToken, async(req, res) => {
+    console.log("edit user router", req.body);
+    const jwt_token = req.headers.jwt_token;
+    const token = await jwt.verify(jwt_token);
+    console.log("토큰 verify 확인 : ", token);
     try {
-        const editUser_data = await loginService.editUser(req.body);
+        const editUser_data = await loginService.editUser(token.idx, req.body);
         res.status(editUser_data.Status).json(editUser_data);
     } catch(err) {
         console.log(err);
@@ -55,10 +56,10 @@ router.put('/edit', async(req, res) => {
     }
 })
 
-router.delete('/delete', authUtil.checkToken, async(req, res) => {
+router.delete('/withdraw', jwt.authUtil.checkToken, async(req, res) => {
     const jwt_token = req.headers.jwt_token;
     const token = await jwt.verify(jwt_token);
-    console.log("토큰 verify 확인 : ", token);
+    console.log("토큰 verify 확인 : ", token.idx);
     try {
         const deleteUser_data = await loginService.deleteUser(token.idx);
         res.status(deleteUser_data.Status).json(deleteUser_data);
@@ -66,7 +67,19 @@ router.delete('/delete', authUtil.checkToken, async(req, res) => {
         console.log(err);
         res.status(400).json({message : err.message});
     }
-    //탈퇴 시 토큰 파괴...
+})
+
+router.post('/profile', jwt.authUtil.checkToken, async(req, res) => {
+    const jwt_token = req.headers.jwt_token;
+    const token = await jwt.verify(jwt_token);
+    console.log("토큰 verify 확인 : ", token.idx);
+    try {
+        const profile_data = await loginService.getProfile(token.idx);
+        res.status(profile_data.Status).json(profile_data);
+    } catch(err) {
+        console.log(err);
+        res.status(400).json({message : err.message});
+    }
 })
 
 module.exports = router;

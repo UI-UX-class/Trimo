@@ -19,10 +19,10 @@ async function showTrip(req) {
     });
 }
 
-async function recentTrip(req) {
+async function recentTrip(idx) {
     console.log("Dao In");
     return new Promise((resolve, reject) => {
-        var queryData = `SELECT title, country, travel_id, start_date, end_date FROM travel WHERE user_id = 1 ORDER BY time DESC LIMIT 1`;
+        var queryData = `SELECT title, country, travel_id, start_date, end_date FROM travel WHERE user_id = ${idx} ORDER BY time DESC LIMIT 1`;
         db.query(queryData, (error, db_data) => {
             if (error) {
                 console.error(
@@ -33,7 +33,6 @@ async function recentTrip(req) {
                 reject("DB ERR");
             }
             resolve(db_data);
-            console.log("Dao out");
         });
     });
 }

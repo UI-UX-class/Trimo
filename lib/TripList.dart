@@ -28,7 +28,7 @@ class _TripListState extends State<TripList> {
   }
 
   Future<void> _fetchTripListWithDelay() async {
-    await Future.delayed(Duration(milliseconds: 300));  // 3초 대기
+    await Future.delayed(Duration(milliseconds: 500));  // 0.3초 대기
     _fetchTripList();
   }
 
