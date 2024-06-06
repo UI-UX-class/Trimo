@@ -217,6 +217,26 @@ class _MyPageState extends State<_MyPage> {
                         ],
                       ),
                     ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, '/signUpPage');
+                          },
+                          child: Text(
+                            "회원탈퇴",
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   )
                 ],
               ),
