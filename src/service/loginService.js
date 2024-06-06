@@ -21,7 +21,7 @@ async function login(req) {
         } else {
             const findUser = await loginDao.login(req);
             console.log("findUser return값 확인", findUser);
-            if(findUser == "empty") {  //이게 맞나?
+            if(findUser == "empty") {
                 return {
                     Message : "비밀번호가 일치하지 않습니다.",
                     Status : 404
@@ -66,9 +66,9 @@ async function signUp(req){
             "idx" : user_id,
             "id" : req.id
         }
-        //긴 토큰 생성
+        //긴 토큰 생성 -> DB에 저장되는 애
         const basic_token = await sign.basicToken(user);
-        //짧은 토큰 생성
+        //짧은 토큰 생성 -> 앱에 저장되는 애
         const jwt_token = await sign.generateToken(user);
         const token_req = {
             "token" : basic_token,
