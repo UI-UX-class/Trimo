@@ -72,7 +72,7 @@ class _MainPageState extends State<MainPage> {
     _initializePreferences();
     _loadToken();
   }
-  
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.detached) {

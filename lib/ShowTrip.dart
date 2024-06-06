@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import "./trip.dart";
+import './Main.dart';
 
 class ShowTrip extends StatefulWidget {
   final int? tripId;
@@ -40,8 +41,8 @@ class _ShowTripState extends State<ShowTrip> {
   }
 
   Future<void> _deleteTripData(travel_id) async {
-    final url = 'http://10.0.2.2:3000/deleteTrip';
-    final response = await http.post(
+    final url = 'http://10.0.2.2:3000/delnote';
+    final response = await http.delete(
         Uri.parse(url),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
@@ -192,6 +193,12 @@ class _ShowTripState extends State<ShowTrip> {
                                       onTap: () {
                                         print('일지 삭제');
                                         _deleteTripData(widget.tripId);
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => MainPage(user_id: 1,),
+                                          ),
+                                        );
                                       },
                                       child: Padding(
                                         padding: EdgeInsets.all(8.0),
