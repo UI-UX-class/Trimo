@@ -7,6 +7,7 @@ function findId(req) {
         db.query(queryData, (error, db_data) => {
             if(error){
                 console.error(queryData + "\n" + "find ID DB Error [user]");
+                console.log(error);
                 reject("DB ERR")
             }
             else if(!db_data.length) {
