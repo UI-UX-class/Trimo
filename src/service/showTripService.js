@@ -31,23 +31,19 @@ async function trip(req) {
     }
 }
 
-async function recentTrip(req) {
-    console.log("Service In1");
+async function recentTrip(idx) {
     try {
-        if (!req) {
+        if (!idx) {
             return {
                 "Message": "id 값이 없습니다.",
                 "Status": 406
             };
         }
-        console.log("Service Out1");
-        const trip_data = await showTripDao.recentTrip(req);
-        console.log("Service In2");
+        const trip_data = await showTripDao.recentTrip(idx);
         const trip_list = [];
         for (const data of trip_data) {
             trip_list.push(data);
         }
-        console.log("Service Out2");
         return {
             "Message": "성공",
             "Status": 200,
