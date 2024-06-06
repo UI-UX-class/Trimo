@@ -64,6 +64,8 @@ class _SignIn extends State<SignIn> {
         final responseBody = jsonDecode(response.body);
         final jwt_token = responseBody['jwt_token'];
         print(responseBody['Data']);
+
+        // 토큰 추가
         _prefs.setString('jwt_token', jwt_token);
         print('jwt token 확인');
         print(_readToken());
@@ -71,7 +73,7 @@ class _SignIn extends State<SignIn> {
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => MainPage(user_id: 1,))
+                builder: (context) => MainPage())
         );
       }else{
         print('데이터 저장 실패: ${response.statusCode}');

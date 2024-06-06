@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';  // 저장소 쓰는 패키지
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:card_swiper/card_swiper.dart';
@@ -61,7 +61,8 @@ class _MainPageState extends State<MainPage> {
   int travel_id = 0;
   String start_date = '';
   String end_date = '';
-  //token 객체 생성
+
+  // 패키지 객체 생성
   late SharedPreferences _prefs;
 
   @override
@@ -107,9 +108,12 @@ class _MainPageState extends State<MainPage> {
     await _initSharedPreferences();
     await _fetchMain();
   }
+
+  // 패키지 객체를 초기화 해주는 친구 -> 모든 파일에 필요 !
   Future<void> _initSharedPreferences() async {
     _prefs = await SharedPreferences.getInstance();
   }
+  // 토큰 읽어오는 함수
   Future<String?> _readToken() async {
     final myToken = _prefs.getString('jwt_token');
     print('token read success !!');
@@ -378,12 +382,21 @@ class _MainPageState extends State<MainPage> {
                       ),
                       GestureDetector(
                         onTap: () async{
-                          final result = await Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => TripListYear()),
-                          );
-                          if (result != null && result == true) {
-                            _fetchMain();
+                          var token = await _readToken();
+                          if(token == null) {
+                            print('로그인 하세용 ~ ! ! ');
+                            // 여기 나중에 알림창 띄울거임 !!
+                          }
+                          else {
+                            print(token);
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TripListYear()),
+                            );
+                            if (result != null && result == true) {
+                              _fetchMain();
+                            }
                           }
                         },
                             child: ClipRRect(
