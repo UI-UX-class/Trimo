@@ -11,13 +11,13 @@ const generateToken = (payload) => {
     return token;
 }
 
-//긴 애
+//긴 애 -> 필요 X
 const basicToken = (payload) => {
     const token = jwt.sign(payload, secretKey, basic_option);
     return token;
 }
 
-//다시 만드는 애
+//다시 만드는 애 -> 수정 필요
 const refresshToken = (token) => {
     try {
         const decoded = jwt.verify(token, secretKey);

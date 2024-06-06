@@ -54,12 +54,13 @@ router.put('/edit', authUtil.checkToken, async(req, res) => {
     }
 })
 
-router.delete('/delete', authUtil.checkToken, async(req, res) => {
-    const jwt_token = req.headers.jwt_token;
-    const token = await jwt.verify(jwt_token);
-    console.log("토큰 verify 확인 : ", token);
+router.delete('/withdraw', async(req, res) => {
+    //const jwt_token = req.headers.jwt_token;
+    //const token = await jwt.verify(jwt_token);
+    //console.log("토큰 verify 확인 : ", token);
+    console.log('delete body', req.body);
     try {
-        const deleteUser_data = await loginService.deleteUser(token.idx);
+        const deleteUser_data = await loginService.deleteUser(req.body);
         res.status(deleteUser_data.Status).json(deleteUser_data);
     } catch(err) {
         console.log(err);

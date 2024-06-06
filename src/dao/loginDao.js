@@ -109,13 +109,13 @@ function editUser(idx, req) {
 
 function deleteUser(idx) {
     return new Promise((resolve, reject) => {
-        var queryData = `delete from user where user_id = ${idx}`;
+        var queryData = `delete from user where user_id = ${idx.user_id}`;
         db.query(queryData, (error, db_data) => {
             if(error) {
                 console.error(queryData + "\n" + "deleteUser DB Error [user]");
                 reject("DB ERR")
             } else {
-                console.log('회원탈퇴 Success ▶\t' + idx + "\t성공\n");
+                console.log('회원탈퇴 Success ▶\t' + idx.user_id + "\t성공\n");
                 resolve(db_data);
             }
         })
