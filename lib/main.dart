@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:card_swiper/card_swiper.dart';
@@ -10,6 +12,8 @@ import './SignUp.dart';
 import './ChangeAccountInfo.dart';
 import './ShowTrip.dart';
 import './WriteTrip.dart';
+import './prefs.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(TrimoApp());
@@ -43,11 +47,72 @@ class TrimoApp extends StatelessWidget {
 }
 
 class MainPage extends StatefulWidget {
+  final int? user_id;
+  MainPage({this.user_id});
+
   @override
   _MainPageState createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
+  //이게 맞는지 모르겠지만 일단 해봄...
+  List trip = [];
+  String title = '';  //일단 제목이 있고 여행지가 없는건 아닌거같아서 여기에 여행지 박아두긴 함
+  int travel_id = 0;
+  String start_date = '';
+  String end_date = '';
+  final SetPrefs _prefs = SetPrefs();
+  String _jwtToken = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchMain();
+    //객체 초기화
+    _initializePreferences();
+    _loadToken();
+  }
+  
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.detached) {
+      _deleteToken();
+      _loadToken();
+    }
+  }
+  // 토큰 함수
+  Future<void> _initializePreferences() async {
+    await _prefs.initSharedPreferences();
+    String? token = _prefs.getJwtToken();
+    if (token != null) {
+      setState(() {
+        _jwtToken = token;
+      });
+    }
+  }
+  Future<void> _loadToken() async {
+    String? token = _prefs.getJwtToken();
+    print('__load Token__');
+    print(token);
+    if (token != null) {
+      setState(() {
+        _jwtToken = token;
+      });
+    }
+  }
+  Future<void> _saveToken(String token) async {
+    await _prefs.setJwtToken(token);
+    setState(() {
+      _jwtToken = token;
+    });
+  }
+  Future<void> _deleteToken() async {
+    await _prefs.removeJwtToken();
+    setState(() {
+      _jwtToken = '';
+    });
+  }
+
   final List<String> bannerList = [
     'assets/travel_banner.png',
     'assets/travel_banner2.png',
@@ -67,6 +132,33 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
+  Future<void> _fetchMain() async{  //메인에서 최근 애 보여주는 친구
+    final url = 'http://10.0.2.2:3000/getnote/recent';
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-type': 'application/json'},
+      body: jsonEncode({
+        'user_id' : 1
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final responseBody = jsonDecode(response.body);
+      setState(() {
+        trip = responseBody['Data'];
+        print('메인 - 최근 일지 불러오기 데이터 확인\n');
+        print(trip);
+        title = trip[0]['country'];
+        start_date = trip[0]['start_date'].split('T')[0];
+        end_date = trip[0]['end_date'].split('T')[0];
+        travel_id = trip[0]['travel_id'];
+        print(travel_id);
+      });
+    } else {
+      print('Main Recent Fail');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,6 +168,7 @@ class _MainPageState extends State<MainPage> {
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Column(
+
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
@@ -106,7 +199,11 @@ class _MainPageState extends State<MainPage> {
                     children: [
                       GestureDetector(
                           onTap: () {
-                            Navigator.pushNamed(context, '/showTrip'); // 최근 여행 페이지 이동
+                            //Navigator.pushNamed(context, '/showTrip'); // 최근 여행 페이지 이동
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => ShowTrip(tripId: travel_id))
+                            );
                           },
                           child: Stack(children: <Widget>[
                             ClipRRect(
@@ -122,7 +219,7 @@ class _MainPageState extends State<MainPage> {
                               bottom: 26,
                               left: 25,
                               child: Text(
-                                '부산',
+                                '${title}',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 28,
@@ -135,7 +232,7 @@ class _MainPageState extends State<MainPage> {
                               bottom: 0, // 텍스트를 이미지의 맨 아래로 정렬
                               right: 10,
                               child: Text(
-                                '05.10 ~ 05.13',
+                                '${start_date} ~ ${end_date}',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 20,

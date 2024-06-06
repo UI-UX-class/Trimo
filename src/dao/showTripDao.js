@@ -22,7 +22,7 @@ async function showTrip(req) {
 async function recentTrip(req) {
     console.log("Dao In");
     return new Promise((resolve, reject) => {
-        var queryData = `SELECT title, contents, country, domestic, start_date, end_date, time, image_first, image_second, days, trip_place FROM travel WHERE user_id = 1 ORDER BY time DESC LIMIT 1`;
+        var queryData = `SELECT title, country, travel_id, start_date, end_date FROM travel WHERE user_id = 1 ORDER BY time DESC LIMIT 1`;
         db.query(queryData, (error, db_data) => {
             if (error) {
                 console.error(

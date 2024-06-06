@@ -4,7 +4,7 @@ async function showTripListYear(req){
     //console.log("Dao In");
     return new Promise((resolve, reject) => {
         var queryData = `SELECT travel_id, title, country, start_date, end_date, image_first FROM travel
-        WHERE YEAR(start_date) = 2024 AND user_id = 1`;
+        WHERE YEAR(start_date) = ${req.year} AND user_id = 1`;
         db.query(queryData, (error, db_data) => {
             if(error) {
                 console.error(

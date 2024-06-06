@@ -38,7 +38,7 @@ function login(req) {
                 resolve(db_data)
             }
             else {
-                console.log('find ID Success ▶\t' + req + " 성공\n");
+                console.log('login Success ▶\t' + req.id+ " 성공\n");
                 resolve(db_data)
             }
         })

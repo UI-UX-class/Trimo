@@ -110,7 +110,6 @@ class _WriteTripState extends State<WriteTrip> {
     var uri = "http://10.0.2.2:3000/newnote";
     try {
       var body = json.encode(newTrip.toJson());
-
       var response = await http.post(
         Uri.parse(uri),
         headers: {"Content-Type": "application/json"},
@@ -118,7 +117,7 @@ class _WriteTripState extends State<WriteTrip> {
       );
       print("확인절차 확인절차 확인절차");
       print(response.body);
-      if (response.statusCode == 201) {
+      if (response.statusCode == 201) { //왜 201임?
         print('데이터 저장 성공');
         final responseBody = jsonDecode(response.body);
         print(responseBody);

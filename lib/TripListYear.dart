@@ -3,7 +3,6 @@ import 'package:trimo/TripList.dart';
 
 class TripListYear extends StatefulWidget {
   const TripListYear({super.key});
-
   @override
   State<TripListYear> createState() => _TripListYearState();
 }
@@ -64,15 +63,18 @@ class _TripListYearState extends State<TripListYear> {
                 itemCount: trips.length,
                 itemBuilder: (context, index) {
                   final trip = trips[index];
+                  //회저어~~언
                   return Transform.translate(
                     offset: Offset(index % 2 == 0 ? -40.0 : 40.0, 0),
                     child: Transform.rotate(
                       angle: index % 2 == 0 ? -0.02 : 0.02,
                       child: GestureDetector(
                         onTap: () {
+                          var itemData = trips[index];
+                          print(itemData['year']);
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => TripList(userId: 1,year: 2024)),
+                            MaterialPageRoute(builder: (context) => TripList(userId: 1,year: int.parse(itemData['year']!))),
                           );
                         },
                         child: Padding(

@@ -39,6 +39,17 @@ class _ShowTripState extends State<ShowTrip> {
     _fetchTripData();
   }
 
+  Future<void> _deleteTripData(travel_id) async {
+    final url = 'http://10.0.2.2:3000/deleteTrip';
+    final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+            'travel_id' : travel_id
+        })
+    );
+  }
+
   Future<void> _fetchTripData() async {
     final url = 'http://10.0.2.2:3000/getnote/${widget.tripId}';
     final response = await http.get(Uri.parse(url));
@@ -142,7 +153,6 @@ class _ShowTripState extends State<ShowTrip> {
                       top: Radius.circular(15.0),
                     ),
                   ),
-                  // 여기에 자식 위젯을 추가하세요
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 5, horizontal: 30),
                     child: Container(
@@ -168,7 +178,7 @@ class _ShowTripState extends State<ShowTrip> {
                                   children: [
                                     InkWell(
                                       onTap: () {
-                                        print('일지 수정');
+                                        print("눌림");
                                       },
                                       child: Padding(
                                         padding: EdgeInsets.all(8.0),
@@ -181,6 +191,7 @@ class _ShowTripState extends State<ShowTrip> {
                                     InkWell(
                                       onTap: () {
                                         print('일지 삭제');
+                                        _deleteTripData(widget.tripId);
                                       },
                                       child: Padding(
                                         padding: EdgeInsets.all(8.0),

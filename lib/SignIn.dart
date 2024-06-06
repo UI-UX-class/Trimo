@@ -1,6 +1,11 @@
+import 'dart:convert';
+//import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import './SignUp.dart';
 import './main.dart';
+import './prefs.dart';
 
 class SignInTest extends StatelessWidget {
   @override
@@ -17,8 +22,86 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignIn extends State<SignIn> {
-  final TextEditingController _idController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  late final TextEditingController _idController;
+  late final TextEditingController _passwordController;
+  final SetPrefs _prefs = SetPrefs();
+  String _jwtToken = '';
+
+  @override
+  void initState(){
+    super.initState();
+    _idController = TextEditingController();
+    _passwordController = TextEditingController();
+    // 앱을 처음부터 실행시킬때마다 로그인을 다시 해야하기 위해서는 토큰을 없애줘야 함
+    // 이 부분은 나중에 주석 풀기
+    _initializePreferences();
+  }
+
+  // 저장소 초기화 하는 함수
+  Future<void> _initializePreferences() async {
+    await _prefs.initSharedPreferences();
+    String? token = _prefs.getJwtToken();
+    if (token != null) {
+      setState(() {
+        _jwtToken = token;
+      });
+    }
+  }
+
+  // 토큰 저장하는 함수
+  Future<void> _saveToken(String token) async {
+    await _prefs.setJwtToken(token);
+    setState(() {
+      _jwtToken = token;
+    });
+  }
+
+  // 토큰 불러오는 함수
+  Future<void> _loadToken() async {
+    String? token = _prefs.getJwtToken();
+    if (token != null) {
+      setState(() {
+        _jwtToken = token;
+      });
+    }
+  }
+
+
+  Future<void> _signIn() async{
+    final id = _idController.text;
+    final pwd = _passwordController.text;
+    final info = {
+      'id' : id,
+      'password' : pwd
+    };
+
+    var url = "http://10.0.2.2:3000/user/login";
+    try{
+      var body = json.encode(info);
+      var response = await http.post(
+        Uri.parse(url),
+        headers: {"Content-Type": "application/json"},
+        body: body,
+      );
+      if(response.statusCode == 200){
+        final responseBody = jsonDecode(response.body);
+        final jwt_token = responseBody['Data'];
+        _saveToken(jwt_token);
+        print('jwt token 확인');
+        print(_prefs.getJwtToken());
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => MainPage(user_id: 1,))
+        );
+      }else{
+        print('데이터 저장 실패: ${response.statusCode}');
+        print('응답 내용: ${response.body}');
+      }
+    }catch(e){
+      print("오류 발생: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,6 +186,9 @@ class _SignIn extends State<SignIn> {
                                         width: 270,
                                         child: TextField(
                                           controller: _idController,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
+                                          ],
                                           decoration: InputDecoration(
                                             border: InputBorder.none,
                                             hintText: 'ID',
@@ -140,6 +226,9 @@ class _SignIn extends State<SignIn> {
                                         width: 270,
                                         child: TextField(
                                           controller: _passwordController,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
+                                          ],
                                           decoration: InputDecoration(
                                             border: InputBorder.none,
                                             hintText: 'Password',
@@ -171,10 +260,10 @@ class _SignIn extends State<SignIn> {
                               ),
                             ),
                             onPressed: () {
-                              String id = _idController.text;
-                              String password = _passwordController.text;
-                              print('ID: $id, Password: $password');
-                              Navigator.pushNamed(context, '/mainPage');
+                              _signIn();
+                              // String id = _idController.text;
+                              // String password = _passwordController.text;
+                              // print('ID: $id, Password: $password');
                             },
                             child: Text(
                               "Login",
