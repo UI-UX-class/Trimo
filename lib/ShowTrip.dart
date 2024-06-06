@@ -4,11 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import "./trip.dart";
-<<<<<<< HEAD
 import './Main.dart';
-=======
 import 'FixTrip.dart';
->>>>>>> 89176231a8f3f11ff5b65961304ee02c790645c5
 
 class ShowTrip extends StatefulWidget {
   final int? tripId;

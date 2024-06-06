@@ -18,9 +18,13 @@ class _TripListYearState extends State<TripListYear> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        scrolledUnderElevation: 0,
-        title: const Text(''),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context,true);
+          },
+        ),
+        title: const Text(' '),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
