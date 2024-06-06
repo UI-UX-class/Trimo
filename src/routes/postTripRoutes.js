@@ -3,7 +3,7 @@ const router = express.Router();
 const postTripService = require("../service/postTripService")
 
 //여행 내용 post
-router.post("/:id", async (req,res) => {
+router.post("/", async (req,res) => {
     try{
         const result = await postTripService.postTrip(req.body);
         res.status(201).json(result);
