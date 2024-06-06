@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import './main.dart';
 import './NewPage.dart';
 import './ChangeAccountInfo.dart';
@@ -22,6 +25,34 @@ class _MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<_MyPage> {
+
+  Future<void> _withDraw() async {
+    final info = {
+      'user_id' : 15  //추후 수정
+    };
+    print('들어오긴 하나요...');
+    var url = "http://10.0.2.2:3000/user/withdraw";
+    try {
+      var body = json.encode(info);
+      print(body);
+      print('\n');
+      var response = await http.delete(
+        Uri.parse(url),
+        headers: {"Content-Type": "application/json"},
+        body : body,
+      );
+      print('????');
+      if(response.statusCode == 200) {
+        print('성공했다면 나올 말');
+        Navigator.pushNamed(context, '/mainPage');
+      }else{
+        print('데이터 저장 실패: ${response.statusCode}');
+        print('응답 내용: ${response.body}');
+      }
+    }catch(e){
+      print("오류 발생: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -225,7 +256,8 @@ class _MyPageState extends State<_MyPage> {
                         padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
                         child: GestureDetector(
                           onTap: () {
-                            Navigator.pushNamed(context, '/signUpPage');
+                            _withDraw();
+                            //Navigator.pushNamed(context, '/signUpPage');
                           },
                           child: Text(
                             "회원탈퇴",

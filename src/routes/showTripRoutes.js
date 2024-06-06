@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const showTripService = require("../service/showTripService");
+const jwt = require('../util/jwt');
 
 // 게시물 확인 ->
 router.post("/", async (req, res) => {
@@ -17,11 +18,14 @@ router.post("/", async (req, res) => {
 });
 
 // 게시물 만든 직후 이동
-router.post("/recent", async (req, res) => {
-    console.log("Routes In1");
+router.post("/recent", jwt.authUtil.checkToken, async (req, res) => {
+    console.log(req.headers);
+    const jwt_token = req.headers.jwt_token;
+    const token = await jwt.verify(jwt_token);
+    console.log("토큰 verify 확인 : ", token.idx);
     try {
-        console.log("Routes Out1");
-        const result = await showTripService.recentTrip(req.body);
+        console.log("recent router", token.idx);
+        const result = await showTripService.recentTrip(token.idx);
         res.status(result.Status).json(result);
         console.log(result);
     } catch (err) {

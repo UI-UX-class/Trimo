@@ -1,6 +1,5 @@
 const loginDao = require('../dao/loginDao');
-const authUtil = require('../middlewares/auth');
-const sign = require('../util/jwt');
+const jwt = require('../util/jwt');
 
 async function login(req) {
     console.log("login service : ", req);
@@ -20,23 +19,26 @@ async function login(req) {
             }
         } else {
             const findUser = await loginDao.login(req);
-            console.log("findUser return값 확인", findUser);
             if(findUser == "empty") {
                 return {
                     "Message" : "비밀번호가 일치하지 않습니다.",
                     "Status" : 404
                 }
             } else {
-                //console.log("여기 안들어와?");
+                console.log(findUser[0]['user_id']);
                 const token_req = {
-                    "idx" : findUser['user_id'],
+                    "idx" : findUser[0]['user_id'],
                     "id" : req.id
                 }
-                const jwt_token = await sign.generateToken(token_req);
-                console.log("login token : ", jwt_token);
+                const jwt_token = await jwt.accessToken(token_req);
+                console.log("login new token 발급 : ", jwt_token);
+                
+                //db에 새로운 토큰 갱신...
+                await loginDao.signIn_token(jwt_token, token_req.idx);
                 return {
                     "Message" : "성공",
-                    "Data" : jwt_token,  //FN쪽에 가서 local에 저장될 토큰
+                    "Data" : token_req.idx,
+                    "jwt_token" : jwt_token,  //FN쪽에 가서 local에 저장될 토큰
                     "Status" : 200
                 }
             }
@@ -62,23 +64,8 @@ async function signUp(req){
         }
         const user_id = await loginDao.signUp(req);
         console.log('signUp getId : ', user_id);
-        const user = {
-            "idx" : user_id,
-            "id" : req.id
-        }
-        //긴 토큰 생성 -> DB에 저장되는 애
-        const basic_token = await sign.basicToken(user);
-        //짧은 토큰 생성 -> 앱에 저장되는 애
-        const jwt_token = await sign.generateToken(user);
-        const token_req = {
-            "token" : basic_token,
-            "idx" : user_id
-        }
-        const signUp_data = await loginDao.signUp_token(token_req);
         return {
             "Message" : "성공",
-            "jwt_token" : jwt_token,
-            "Data" : signUp_data,  //얘를 줄 필요가 있나?
             "Status" : 200
         }
       }
@@ -91,16 +78,16 @@ async function signUp(req){
     }
 }
 
-async function getUser(req) {
-    console.log('edit get user service', req);
+async function getUser(idx) {
+    console.log('edit get user service', idx);
     try {
-        if(!req) {
+        if(!idx) {
             return {
                 "Message" : "요청값이 없습니다.",
                 "Status" : 406
             }
         }
-        const getUser_data = await loginDao.getUser(req);
+        const getUser_data = await loginDao.getUser(idx);
         console.log('getUser 확인', getUser_data);
         return {
             "Message" : "성공",
@@ -167,11 +154,36 @@ async function deleteUser(idx) {
     }
 }
 
+async function getProfile(idx) {
+    console.log('get profile service', idx);
+    try {
+        if(!idx) {
+            return {
+                "Message" : "id가 없습니다.",
+                "Status" : 406
+            }
+        }
+        const getProfile_data = await loginDao.getProfile(idx);
+        return {
+            "Message" : "성공",
+            "Data" : getProfile_data,
+            "Status" : 200
+        }
+    }
+    catch(err){
+        return {
+            "Message" : "실패",
+            "Status" : 400,
+            "Error" : err
+        }
+    }
+}
 
 module.exports = {
     login,
     signUp,
     getUser,
     editUser,
-    deleteUser
+    deleteUser,
+    getProfile
 }

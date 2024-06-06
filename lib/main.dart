@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:shared_preferences/shared_preferences.dart';  // 저장소 쓰는 패키지
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:card_swiper/card_swiper.dart';
@@ -12,7 +12,6 @@ import './SignUp.dart';
 import './ChangeAccountInfo.dart';
 import './ShowTrip.dart';
 import './WriteTrip.dart';
-import './prefs.dart';
 import 'package:http/http.dart' as http;
 
 void main() {
@@ -57,32 +56,27 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  //이게 맞는지 모르겠지만 일단 해봄...
   List trip = [];
   String title = '';  //일단 제목이 있고 여행지가 없는건 아닌거같아서 여기에 여행지 박아두긴 함
   int travel_id = 0;
   String start_date = '';
   String end_date = '';
-  final SetPrefs _prefs = SetPrefs();
-  String _jwtToken = '';
+
+  // 패키지 객체 생성
+  late SharedPreferences _prefs;
 
   @override
   void initState() {
     super.initState();
-    _fetchMain();
-    //객체 초기화
-    _initializePreferences();
-    _loadToken();
+    _initApp();
   }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.detached) {
-      _deleteToken();
-      _loadToken();
-    }
-  }
-
+  // @override
+  // void didChangeAppLifecycleState(AppLifecycleState state) {
+  //   if (state == AppLifecycleState.detached) {
+  //     _deleteToken();
+  //     _loadToken();
+  //   }
+  // }
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -92,44 +86,10 @@ class _MainPageState extends State<MainPage> {
       widget.routeObserver!.subscribe(this as RouteAware, modalRoute as PageRoute);
     }
   }
-
   @override
   void didPopNext() {
     // 다른 페이지에서 돌아왔을 때 호출되는 함수
     _fetchMain();
-  }
-
-  // 토큰 함수
-  Future<void> _initializePreferences() async {
-    await _prefs.initSharedPreferences();
-    String? token = _prefs.getJwtToken();
-    if (token != null) {
-      setState(() {
-        _jwtToken = token;
-      });
-    }
-  }
-  Future<void> _loadToken() async {
-    String? token = _prefs.getJwtToken();
-    print('__load Token__');
-    print(token);
-    if (token != null) {
-      setState(() {
-        _jwtToken = token;
-      });
-    }
-  }
-  Future<void> _saveToken(String token) async {
-    await _prefs.setJwtToken(token);
-    setState(() {
-      _jwtToken = token;
-    });
-  }
-  Future<void> _deleteToken() async {
-    await _prefs.removeJwtToken();
-    setState(() {
-      _jwtToken = '';
-    });
   }
 
   final List<String> bannerList = [
@@ -144,6 +104,24 @@ class _MainPageState extends State<MainPage> {
     'https://www.hotels.com/'
   ];
 
+  Future<void> _initApp() async {
+    await _initSharedPreferences();
+    await _fetchMain();
+  }
+
+  // 패키지 객체를 초기화 해주는 친구 -> 모든 파일에 필요 !
+  Future<void> _initSharedPreferences() async {
+    _prefs = await SharedPreferences.getInstance();
+  }
+  // 토큰 읽어오는 함수
+  Future<String?> _readToken() async {
+    final myToken = _prefs.getString('jwt_token');
+    print('token read success !!');
+    print(myToken);
+    print('\n');
+    return myToken;
+  }
+
   Future<void> _launchURL(String url) async {
     final uri = Uri.parse(url);
     if (!await launchUrl(uri)) {
@@ -152,15 +130,18 @@ class _MainPageState extends State<MainPage> {
   }
 
   Future<void> _fetchMain() async{  //메인에서 최근 애 보여주는 친구
+    //임시로 토큰 삭제 진행
+    //_prefs.remove('jwt_token');
+    final token = await _readToken();
+    print('main read data');
+    print(token);
     final url = 'http://10.0.2.2:3000/getnote/recent';
     final response = await http.post(
       Uri.parse(url),
-      headers: {'Content-type': 'application/json'},
-      body: jsonEncode({
-        'user_id' : 1
-      }),
+      headers: {'Content-type': 'application/json',
+      'jwt_token' : token ?? ''},
     );
-
+    print(response.headers['jwt_token']);
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);
       setState(() {
@@ -401,12 +382,21 @@ class _MainPageState extends State<MainPage> {
                       ),
                       GestureDetector(
                         onTap: () async{
-                          final result = await Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => TripListYear()),
-                          );
-                          if (result != null && result == true) {
-                            _fetchMain();
+                          var token = await _readToken();
+                          if(token == null) {
+                            print('로그인 하세용 ~ ! ! ');
+                            // 여기 나중에 알림창 띄울거임 !!
+                          }
+                          else {
+                            print(token);
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TripListYear()),
+                            );
+                            if (result != null && result == true) {
+                              _fetchMain();
+                            }
                           }
                         },
                             child: ClipRRect(
