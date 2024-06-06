@@ -110,8 +110,12 @@ class _ShowTripState extends State<ShowTrip> {
     print(tripData);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        scrolledUnderElevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context,true);
+          },
+        ),
         title: const Text(' '),
       ),
       body: tripData == null

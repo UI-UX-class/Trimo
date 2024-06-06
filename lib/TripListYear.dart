@@ -135,11 +135,9 @@ class _TripListYearState extends State<TripListYear> {
                                   ],
                                 ),
                               )
-                              
                             ),
                           ),
                         ),
-
                       ),
                     ),
                   );

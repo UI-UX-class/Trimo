@@ -71,27 +71,6 @@ class _WriteTripState extends State<WriteTrip> {
     }
   }
 
-  // 이미지 가져오기 함수
-  // Future getImageGallery(int index) async {
-  //   final pickedFile = await picker.pickImage(
-  //     source: ImageSource.gallery,
-  //     imageQuality: 80,
-  //   );
-  //   setState(() {
-  //     if (pickedFile != null) {
-  //       if (index == 1) {
-  //         _image1 = File(pickedFile.path);
-  //         image1Path = pickedFile.path;
-  //       } else {
-  //         _image2 = File(pickedFile.path);
-  //         image2Path = pickedFile.path;
-  //       }
-  //     } else {
-  //       print("No Image Picked");
-  //     }
-  //   });
-  // }
-
   // 여행 정보 저장 함수
   Future<void> _saveTrip() async {
     final newTrip = Trip(
@@ -126,7 +105,10 @@ class _WriteTripState extends State<WriteTrip> {
           MaterialPageRoute(
             builder: (context) => ShowTrip(tripId: responseBody['Data'],),
           ),
-        );
+        ).then((value) {
+          setState(() {
+          });
+        });
       } else {
         print('데이터 저장 실패: ${response.statusCode}');
         print('응답 내용: ${response.body}');
@@ -135,7 +117,6 @@ class _WriteTripState extends State<WriteTrip> {
       print('오류 발생: $e');
     }
   }
-
 
   @override
   Widget build(BuildContext context) {

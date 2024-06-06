@@ -23,6 +23,11 @@ class _TripListState extends State<TripList> {
   @override
   void initState() {
     super.initState();
+    _fetchTripListWithDelay();
+  }
+
+  Future<void> _fetchTripListWithDelay() async {
+    await Future.delayed(Duration(milliseconds: 300));  // 3초 대기
     _fetchTripList();
   }
 
@@ -36,7 +41,6 @@ class _TripListState extends State<TripList> {
         'year': widget.year,
       }),
     );
-
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);
       setState(() {
@@ -45,6 +49,18 @@ class _TripListState extends State<TripList> {
     } else {
       print('Failed to load trip list');
     }
+  }
+
+  Future<void> _deleteTripData(travel_id) async {
+    final url = 'http://10.0.2.2:3000/delnote';
+    final response = await http.delete(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'travel_id' : travel_id
+        })
+    );
+    return Future(() => null);
   }
 
   String formatDate(String dateStr) {
@@ -130,13 +146,19 @@ class _TripListState extends State<TripList> {
                     File imageFile = File(imagePath);
                     final trip = trips[index];
                     return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
+                      onTap: () async{
+                        final result = await Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => ShowTrip(tripId: trip['travel_id']),
                           ),
-                        );
+                        ).then((value){
+                          setState(() {
+                          });
+                        });
+                        if(result != null && result ==true){
+                          _fetchTripList();
+                        }
                       },
                       child: Card(
                         color: Colors.white,
@@ -178,7 +200,8 @@ class _TripListState extends State<TripList> {
                                 if (value == 'edit') {
                                   // 수정 로직 추가
                                 } else if (value == 'delete') {
-                                  // 삭제 로직 추가
+                                  _deleteTripData(trip['travel_id']);
+                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TripList(userId: widget.userId, year: widget.year)));
                                 }
                               },
                             ),
