@@ -7,7 +7,7 @@ router.put("/:id", async (req,res) => {
     console.log("라우터 들어옴");
     try{
         const result = await updateTripService.updateTrip(req.body, req.params.id);
-        res.status(201).json(result);
+        res.status(result.Status).json(result);
         console.log(result);
     } catch(err){
         console.log(err);

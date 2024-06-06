@@ -1,3 +1,4 @@
+const { query } = require('express');
 const db = require('../config/db')
 
 function findId(req) {
@@ -48,7 +49,7 @@ function login(req) {
 function signUp(parameter){
     return new Promise((resolve, reject) => {
         var queryData = `insert into user(nickname, id, password, email, pfImg_id)
-        value('${parameter.nickname}', '${parameter.id}', '${parameter.password}', '${parameter.email}', 
+        value('${parameter.nickname}', '${parameter.id}', '${parameter.password}', '${parameter.email}',
         ${parameter.pfImg_id})`
         db.query(queryData, (error, db_data) => {
             if(error){
@@ -75,18 +76,33 @@ function signUp_token(req) {
     })
 }
 
-function editUser(idx, req) {
+function getUser(req) {
+    return new Promise((resolve, reject) => {
+        var queryData = `select nickname, id, password, email, pfImg_id from user where user_id = ${req.user_id}`;
+        db.query(queryData, (error, db_data) => {
+            if(error) {
+                console.error(queryData + "\n" + "getUser DB Error [user]");
+                reject("DB ERR")
+            } else {
+                resolve(db_data);
+            }
+        })
+    })
+}
+
+function editUser(req) {
     return new Promise((resolve, reject) => {
         var queryData = `update user set nickname = '${req.nickname}', password = '${req.password}', 
-        email = '${req.email}' where user_id = ${idx}`;
+        email = '${req.email}' where user_id = ${req.user_id}`;
         db.query(queryData, (error, db_data) => {
             if(error) {
                 console.error(queryData + "\n" + error + "editUser DB Error [user]");
                 reject("DB ERR")
             }
             else {
-                console.log('회원수정 Success ▶\t' + idx + "\t성공\n");
-                resolve(idx);
+//                console.log('회원수정 Success ▶\t' + idx + "\t성공\n");
+//                resolve(idx);
+                resolve(db_data);
             }
         })
     })
@@ -112,6 +128,7 @@ module.exports = {
     login,
     signUp,
     signUp_token,
+    getUser,
     editUser,
     deleteUser
 }

@@ -21,7 +21,7 @@ async function login(req) {
         } else {
             const findUser = await loginDao.login(req);
             console.log("findUser return값 확인", findUser);
-            if(findUser == "empty") {  //이게 맞나?
+            if(findUser == "empty") {
                 return {
                     "Message" : "비밀번호가 일치하지 않습니다.",
                     "Status" : 404
@@ -66,9 +66,9 @@ async function signUp(req){
             "idx" : user_id,
             "id" : req.id
         }
-        //긴 토큰 생성
+        //긴 토큰 생성 -> DB에 저장되는 애
         const basic_token = await sign.basicToken(user);
-        //짧은 토큰 생성
+        //짧은 토큰 생성 -> 앱에 저장되는 애
         const jwt_token = await sign.generateToken(user);
         const token_req = {
             "token" : basic_token,
@@ -91,16 +91,42 @@ async function signUp(req){
     }
 }
 
-async function editUser(idx, req) {
-    console.log('edit user service', idx, req);
+async function getUser(req) {
+    console.log('edit get user service', req);
     try {
-        if(!req || !idx) {
+        if(!req) {
             return {
                 "Message" : "요청값이 없습니다.",
                 "Status" : 406
             }
         }
-        const editUser_id = await loginDao.editUser(idx, req);
+        const getUser_data = await loginDao.getUser(req);
+        console.log('getUser 확인', getUser_data);
+        return {
+            "Message" : "성공",
+            "Data" : getUser_data,
+            "Status" : 200
+        }
+    }
+    catch (err) {
+        return {
+            "Message" : "실패",
+            "Status" : 400,
+            "Error" : err
+        }
+    }
+}
+
+async function editUser(req) {
+    console.log('edit user service',req);
+    try {
+        if(!req) {
+            return {
+                "Message" : "요청값이 없습니다.",
+                "Status" : 406
+            }
+        }
+        const editUser_id = await loginDao.editUser(req);
         console.log("editUser_id 확인", editUser_id);
         return {
             "Message" : "성공",
@@ -129,7 +155,7 @@ async function deleteUser(idx) {
         const deleteUser = await loginDao.deleteUser(idx);
         return {
             "Message" : "성공",
-            "Status" : 200
+            "Status" : 200,
         }
     }
     catch(err){
@@ -145,6 +171,7 @@ async function deleteUser(idx) {
 module.exports = {
     login,
     signUp,
+    getUser,
     editUser,
     deleteUser
 }

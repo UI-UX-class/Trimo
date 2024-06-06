@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:intl/intl.dart';
+import 'FixTrip.dart';
 import 'ShowTrip.dart';
 import 'WriteTrip.dart';
 
@@ -199,6 +200,24 @@ class _TripListState extends State<TripList> {
                               onSelected: (value) {
                                 if (value == 'edit') {
                                   // 수정 로직 추가
+                                  showModalBottomSheet<void>(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    backgroundColor: Colors.white,
+                                    barrierColor: Colors.transparent,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(15.0),
+                                      ),
+                                      side: BorderSide(
+                                        color: Colors.black,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    builder: (BuildContext context) {
+                                      return FixTrip(tripId: trip['travel_id']);
+                                    },
+                                  );
                                 } else if (value == 'delete') {
                                   _deleteTripData(trip['travel_id']);
                                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TripList(userId: widget.userId, year: widget.year)));

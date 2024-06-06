@@ -6,7 +6,7 @@ const postTripService = require("../service/postTripService")
 router.post("/", async (req,res) => {
     try{
         const result = await postTripService.postTrip(req.body);
-        res.status(201).json(result);
+        res.status(result.Status).json(result);
         console.log(result);
     } catch(err){
         console.log(err);

@@ -6,7 +6,7 @@ router.delete("/", async (req,res) => {
     try{
         console.log('delete note router in');
         const result = await deleteTripService.deleteTrip(req.body);
-        res.status(201).json(result);
+        res.status(result.Status).json(result);
         console.log(result);
     } catch(err){
         console.log(err);
