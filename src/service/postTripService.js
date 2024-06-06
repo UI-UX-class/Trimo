@@ -22,7 +22,7 @@ async function postTrip(data) {
         const result = await postTripDao.postTrip(data, postData);
         return {
             "Message": "성공",
-            "Status": 201,
+            "Status": 200,
             "Data": result
         };
     } catch (err) {
