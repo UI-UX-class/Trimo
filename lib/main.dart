@@ -48,7 +48,9 @@ class TrimoApp extends StatelessWidget {
 
 class MainPage extends StatefulWidget {
   final int? user_id;
-  MainPage({this.user_id});
+  final RouteObserver<PageRoute>? routeObserver;
+
+  MainPage({this.user_id, this.routeObserver});
 
   @override
   _MainPageState createState() => _MainPageState();
@@ -72,7 +74,7 @@ class _MainPageState extends State<MainPage> {
     _initializePreferences();
     _loadToken();
   }
-  
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.detached) {
@@ -80,6 +82,23 @@ class _MainPageState extends State<MainPage> {
       _loadToken();
     }
   }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 현재 페이지를 RouteObserver에 등록
+    final modalRoute = ModalRoute.of(context);
+    if (widget.routeObserver != null && modalRoute != null) {
+      widget.routeObserver!.subscribe(this as RouteAware, modalRoute as PageRoute);
+    }
+  }
+
+  @override
+  void didPopNext() {
+    // 다른 페이지에서 돌아왔을 때 호출되는 함수
+    _fetchMain();
+  }
+
   // 토큰 함수
   Future<void> _initializePreferences() async {
     await _prefs.initSharedPreferences();
@@ -146,6 +165,8 @@ class _MainPageState extends State<MainPage> {
       final responseBody = jsonDecode(response.body);
       setState(() {
         trip = responseBody['Data'];
+        var newData = trip[0]['country'];
+        print(newData);
         print('메인 - 최근 일지 불러오기 데이터 확인\n');
         print(trip);
         title = trip[0]['country'];
@@ -379,8 +400,14 @@ class _MainPageState extends State<MainPage> {
                           ),
                       ),
                       GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, '/tripListYear'); // 최근 여행 페이지 이동
+                        onTap: () async{
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => TripListYear()),
+                          );
+                          if (result != null && result == true) {
+                            _fetchMain();
+                          }
                         },
                             child: ClipRRect(
                                 borderRadius: BorderRadius.circular(3.0),

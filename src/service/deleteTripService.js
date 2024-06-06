@@ -7,7 +7,7 @@ async function deleteTrip(data) {
         const result = await deleteTripDao.deleteTrip(data.travel_id);
         return {
             "Message": "성공",
-            "Status": 201
+            "Status": 200
         };
     } catch (err) {
         return {

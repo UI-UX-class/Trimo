@@ -1,11 +1,12 @@
 var express = require("express");
 const router = express.Router();
-const deleteTripService = require("../service/deleteTripService")
+const updateTripService = require("../service/updateTripService")
 
-router.delete("/", async (req,res) => {
+//여행 내용 post
+router.put("/:id", async (req,res) => {
+    console.log("라우터 들어옴");
     try{
-        console.log('delete note router in');
-        const result = await deleteTripService.deleteTrip(req.body);
+        const result = await updateTripService.updateTrip(req.body, req.params.id);
         res.status(201).json(result);
         console.log(result);
     } catch(err){
@@ -13,4 +14,5 @@ router.delete("/", async (req,res) => {
         res.status(400).json({message: err.message});
     }
 })
+
 module.exports = router;

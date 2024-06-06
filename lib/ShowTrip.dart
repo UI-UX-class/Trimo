@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import "./trip.dart";
+import './Main.dart';
+import 'FixTrip.dart';
 
 class ShowTrip extends StatefulWidget {
   final int? tripId;
@@ -40,8 +42,8 @@ class _ShowTripState extends State<ShowTrip> {
   }
 
   Future<void> _deleteTripData(travel_id) async {
-    final url = 'http://10.0.2.2:3000/deleteTrip';
-    final response = await http.post(
+    final url = 'http://10.0.2.2:3000/delnote';
+    final response = await http.delete(
         Uri.parse(url),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
@@ -178,7 +180,24 @@ class _ShowTripState extends State<ShowTrip> {
                                   children: [
                                     InkWell(
                                       onTap: () {
-                                        print("눌림");
+                                        showModalBottomSheet<void>(
+                                          context: context,
+                                          isScrollControlled: true,
+                                          backgroundColor: Colors.white,
+                                          barrierColor: Colors.transparent,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.vertical(
+                                              top: Radius.circular(15.0),
+                                            ),
+                                            side: BorderSide(
+                                              color: Colors.black,
+                                              width: 1,
+                                            ),
+                                          ),
+                                          builder: (BuildContext context) {
+                                            return FixTrip(tripId: widget.tripId);
+                                          },
+                                        );
                                       },
                                       child: Padding(
                                         padding: EdgeInsets.all(8.0),
@@ -192,6 +211,12 @@ class _ShowTripState extends State<ShowTrip> {
                                       onTap: () {
                                         print('일지 삭제');
                                         _deleteTripData(widget.tripId);
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => MainPage(user_id: 1,),
+                                          ),
+                                        );
                                       },
                                       child: Padding(
                                         padding: EdgeInsets.all(8.0),
@@ -295,20 +320,24 @@ class _ShowTripState extends State<ShowTrip> {
                           ),
 
                           SizedBox(height: 20,),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("여행 남기기", style: TextStyle(fontSize: 14),),
-                              Container(
-                                margin: EdgeInsets.only(top: 10),
-                                color: Color(0xFFEAEBF2),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                                  child: Text("${trip.tripDiary}", maxLines: 10,
+                          Container(
+                            width: double.infinity,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("여행 남기기", style: TextStyle(fontSize: 14),),
+                                Container(
+                                  width: double.infinity,
+                                  margin: EdgeInsets.only(top: 10),
+                                  color: Color(0xFFEAEBF2),
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                                    child: Text("${trip.tripDiary}", maxLines: 10,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
 
                           Container(
