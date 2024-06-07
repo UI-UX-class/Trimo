@@ -93,7 +93,7 @@ function getUser(idx) {
 function editUser(req) {
     return new Promise((resolve, reject) => {
         var queryData = `update user set nickname = '${req.nickname}', password = '${req.password}', 
-        email = '${req.email}' where user_id = ${req.user_id}`;
+        email = '${req.email}', pfImg_id = '${req.pfImg_id}' where user_id = ${req.user_id}`;
         db.query(queryData, (error, db_data) => {
             if(error) {
                 console.error(queryData + "\n" + error + "editUser DB Error [user]");
