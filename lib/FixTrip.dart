@@ -192,13 +192,11 @@ class _FixTripState extends State<FixTrip> {
         body: body,
       );
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         final responseBody = jsonDecode(response.body);
-        Navigator.pushReplacement(
+        Navigator.pop(
           context,
-          MaterialPageRoute(
-            builder: (context) => ShowTrip(tripId: widget.tripId),
-          ),
+          true
         );
       } else {
         print('데이터 저장 실패: ${response.statusCode}');

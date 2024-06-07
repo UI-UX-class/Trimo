@@ -19,7 +19,6 @@ void main() {
 }
 
 class TrimoApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -295,7 +294,10 @@ class _MainPageState extends State<MainPage> {
                           SizedBox(height: 20),
                           GestureDetector(
                             onTap: () {
-                              Navigator.pushNamed(context, '/signInPage'); // 로그인 페이지 이동
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => SignIn())
+                              ); // 로그인 페이지 이동
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(3.0),
@@ -356,7 +358,10 @@ class _MainPageState extends State<MainPage> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(context, '/myPage'); // 최근 여행 페이지 이동
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => MyPage())
+                          ); // 최근 여행 페이지 이동
                         },
                         child: ClipRRect(
                             borderRadius: BorderRadius.circular(3.0),

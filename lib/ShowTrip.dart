@@ -215,11 +215,8 @@ class _ShowTripState extends State<ShowTrip> {
                                       onTap: () {
                                         print('일지 삭제');
                                         _deleteTripData(widget.tripId);
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => MainPage(user_id: 1,),
-                                          ),
+                                        Navigator.pop(
+                                          context
                                         );
                                       },
                                       child: Padding(

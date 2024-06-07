@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -24,13 +26,13 @@ class _TripListState extends State<TripList> {
   @override
   void initState() {
     super.initState();
-    _fetchTripListWithDelay();
-  }
-
-  Future<void> _fetchTripListWithDelay() async {
-    await Future.delayed(Duration(milliseconds: 500));  // 0.3초 대기
     _fetchTripList();
   }
+
+  // Future<void> _fetchTripListWithDelay() async {
+  //   await Future.delayed(Duration(milliseconds: 500));  // 0.3초 대기
+  //   _fetchTripList();
+  // }
 
   Future<void> _fetchTripList() async {
     final url = 'http://10.0.2.2:3000/getYearsNote';
@@ -197,10 +199,10 @@ class _TripListState extends State<TripList> {
                                   value: 'delete',
                                 ),
                               ],
-                              onSelected: (value) {
+                              onSelected: (value) async{
                                 if (value == 'edit') {
                                   // 수정 로직 추가
-                                  showModalBottomSheet<void>(
+                                  final re = await showModalBottomSheet<bool>(
                                     context: context,
                                     isScrollControlled: true,
                                     backgroundColor: Colors.white,
@@ -218,9 +220,12 @@ class _TripListState extends State<TripList> {
                                       return FixTrip(tripId: trip['travel_id']);
                                     },
                                   );
+                                  if( re == true ){
+                                   Navigator.pop(context);
+                                  }
                                 } else if (value == 'delete') {
                                   _deleteTripData(trip['travel_id']);
-                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TripList(userId: widget.userId, year: widget.year)));
+                                  Navigator.pop(context);
                                 }
                               },
                             ),
@@ -246,8 +251,8 @@ class _TripListState extends State<TripList> {
                         side: BorderSide(color: Colors.indigo, width: 1),
                         backgroundColor: Colors.white,
                       ),
-                      onPressed: () {
-                        showModalBottomSheet<void>(
+                      onPressed: () async{
+                        final re = await showModalBottomSheet<bool>(
                           context: context,
                           isScrollControlled: true,
                           backgroundColor: Colors.white,
@@ -265,6 +270,11 @@ class _TripListState extends State<TripList> {
                             return WriteTrip();
                           },
                         );
+                        if(re == true){
+                          setState(() {
+                            _fetchTripList();
+                          });
+                        }
                       },
                       child: const Text(
                         "새 일지 생성",

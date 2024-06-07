@@ -100,15 +100,10 @@ class _WriteTripState extends State<WriteTrip> {
         print('데이터 저장 성공');
         final responseBody = jsonDecode(response.body);
         print(responseBody);
-        Navigator.pushReplacement(
+        Navigator.pop(
           context,
-          MaterialPageRoute(
-            builder: (context) => ShowTrip(tripId: responseBody['Data'],),
-          ),
-        ).then((value) {
-          setState(() {
-          });
-        });
+          true
+        );
       } else {
         print('데이터 저장 실패: ${response.statusCode}');
         print('응답 내용: ${response.body}');
