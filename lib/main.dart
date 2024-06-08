@@ -19,6 +19,7 @@ void main() {
 }
 
 class TrimoApp extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -60,6 +61,9 @@ class _MainPageState extends State<MainPage> {
   int travel_id = 0;
   String start_date = '';
   String end_date = '';
+  //프로필
+  String _userName = "로그인";
+  int _userImageIndex = -1;
 
   // 패키지 객체 생성
   late SharedPreferences _prefs;
@@ -89,6 +93,7 @@ class _MainPageState extends State<MainPage> {
   void didPopNext() {
     // 다른 페이지에서 돌아왔을 때 호출되는 함수
     _fetchMain();
+    _fetchUser();
   }
 
   final List<String> bannerList = [
@@ -105,6 +110,7 @@ class _MainPageState extends State<MainPage> {
 
   Future<void> _initApp() async {
     await _initSharedPreferences();
+    await _fetchUser();
     await _fetchMain();
   }
 
@@ -160,6 +166,74 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
+  Future<void> _fetchUser() async{  //메인에서 최근 애 보여주는 친구
+    //임시로 토큰 삭제 진행
+    //_prefs.remove('jwt_token');
+    final token = await _readToken();
+
+    print('main read profile data');
+    print(token);
+
+    if(token == null) {
+      // showAlertDialog(context);
+    }
+    else {
+      final url = 'http://10.0.2.2:3000/user/profile';
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-type': 'application/json',
+          'jwt_token' : token ?? ''},
+      );
+      print(response.body);
+      if (response.statusCode == 200) {
+        final profile = jsonDecode(response.body);
+        print(profile['Data'][0]['nickname']);
+        setState(() {
+          _userName = profile['Data'][0]['nickname'];
+          _userImageIndex = profile['Data'][0]['pfImg_id'];
+        });
+      } else {
+        print('Main Recent Fail');
+      }
+    }
+  }
+
+  String setImageByIndex(int index) {
+    switch (index) {
+      case 0:
+        return "assets/avatar_1.png";
+      case 1:
+        return "assets/avatar_2.png";
+      case 2:
+        return "assets/avatar_3.png";
+      case 3:
+        return "assets/avatar_4.png";
+      default:
+        return 'assets/login.png'; // index가 1이거나 없는 경우에는 null을 저장합니다.
+    }
+  }
+
+  // 로그인 알림창.
+  void showAlertDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("알림"),
+          content: Text("로그인 후 이용해주세요."),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -199,12 +273,17 @@ class _MainPageState extends State<MainPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       GestureDetector(
-                          onTap: () {
-                            //Navigator.pushNamed(context, '/showTrip'); // 최근 여행 페이지 이동
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => ShowTrip(tripId: travel_id))
-                            );
+                          onTap: () async{
+                            var token = await _readToken();
+                            if(token == null) {
+                              showAlertDialog(context);
+                            }
+                            else {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => ShowTrip(tripId: travel_id))
+                              );
+                            }
                           },
                           child: Stack(children: <Widget>[
                             ClipRRect(
@@ -247,26 +326,32 @@ class _MainPageState extends State<MainPage> {
                       Column(
                         children: [
                           GestureDetector(
-                            onTap: () {
-                              showModalBottomSheet<void>(
+                            onTap: () async {
+                              var token = await _readToken();
+                              if(token == null) {
+                                showAlertDialog(context);
+                              }
+                              else {
+                                showModalBottomSheet<void>(
                                 context: context,
                                 isScrollControlled: true,
                                 backgroundColor: Colors.white,
                                 barrierColor: Colors.transparent,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(15.0),
-                                  ),
-                                  side: BorderSide(
-                                    color: Colors.black,
-                                    width: 1,
+                                  top: Radius.circular(15.0),
+                                ),
+                                side: BorderSide(
+                                  color: Colors.black,
+                                  width: 1,
                                   ),
                                 ),
                                 builder: (BuildContext context) {
                                   return WriteTrip();
-                                },
-                              ); // 새로운 여행 페이지 이동
-                            },
+                                  },
+                                );
+                              }
+                            },// 새로운 여행 페이지 이동
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(3.0),
                               child: Stack(
@@ -293,24 +378,24 @@ class _MainPageState extends State<MainPage> {
                           ),
                           SizedBox(height: 20),
                           GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => SignIn())
-                              ); // 로그인 페이지 이동
+                            onTap: () async{
+                              var token = await _readToken();
+                              if(token == null) {
+                                Navigator.pushNamed(context, '/signInPage'); // 로그인 페이지 이동
+                              }
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(3.0),
                               child: Stack(
                                 children: <Widget>[
-                                  Image.asset('assets/login.png',
+                                  Image.asset(setImageByIndex(_userImageIndex),
                                       height: 90, fit: BoxFit.contain),
                                   Positioned(
                                     bottom: 3,
                                     left: 0, // 텍스트를 중앙에 정렬
                                     right: 0, // 텍스트를 중앙에 정렬
                                     child: Text(
-                                      '로그인',
+                                      _userName,
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontSize: 12,
@@ -358,10 +443,7 @@ class _MainPageState extends State<MainPage> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => MyPage())
-                          ); // 최근 여행 페이지 이동
+                          Navigator.pushNamed(context, '/myPage'); // 최근 여행 페이지 이동
                         },
                         child: ClipRRect(
                             borderRadius: BorderRadius.circular(3.0),
@@ -389,8 +471,7 @@ class _MainPageState extends State<MainPage> {
                         onTap: () async{
                           var token = await _readToken();
                           if(token == null) {
-                            print('로그인 하세용 ~ ! ! ');
-                            // 여기 나중에 알림창 띄울거임 !!
+                            showAlertDialog(context);
                           }
                           else {
                             print(token);

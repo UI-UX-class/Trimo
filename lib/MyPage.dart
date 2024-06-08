@@ -1,12 +1,13 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import './main.dart';
 import './NewPage.dart';
 import './ChangeAccountInfo.dart';
 import './SignIn.dart';
+
 
 void main() {
   runApp(MyPage());
@@ -25,6 +26,103 @@ class _MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<_MyPage> {
+  String _logincheck = "로그인";
+  String _userName = "로그인이 필요합니다.";
+  int _userImageIndex = -1;
+
+  late SharedPreferences _prefs;
+
+  @override
+  void initState() {
+    super.initState();
+    _initApp();
+  }
+
+  Future<void> _initApp() async {
+    await _initSharedPreferences();
+    await _fetchUser();
+  }
+
+  Future<void> _fetchUser() async{  //메인에서 최근 애 보여주는 친구
+    //임시로 토큰 삭제 진행
+    //_prefs.remove('jwt_token');
+    final token = await _readToken();
+
+    print('main read data');
+    print(token);
+
+    if(token == null) {
+      // showAlertDialog(context);
+    }
+    else {
+      final url = 'http://10.0.2.2:3000/user/profile';
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-type': 'application/json',
+          'jwt_token' : token ?? ''},
+      );
+      print(response.body);
+      if (response.statusCode == 200) {
+        final profile = jsonDecode(response.body);
+        print(profile['Data'][0]['nickname']);
+        setState(() {
+          _userName = profile['Data'][0]['nickname'];
+          _userImageIndex = profile['Data'][0]['pfImg_id'];
+          _logincheck = "로그아웃";
+        });
+      } else {
+        print('Main Recent Fail');
+      }
+    }
+  }
+
+  // 패키지 객체를 초기화 해주는 친구 -> 모든 파일에 필요 !
+  Future<void> _initSharedPreferences() async {
+    _prefs = await SharedPreferences.getInstance();
+  }
+  //토큰 불러오는 함수.
+  Future<String?> _readToken() async {
+    final myToken = _prefs.getString('jwt_token');
+    print('token read success !!');
+    print(myToken);
+    print('\n');
+    return myToken;
+  }
+
+  void showAlertDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("알림"),
+          content: Text("로그인 후 이용해주세요."),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  String setImageByIndex(int index) {
+    switch (index) {
+      case 0:
+        return "assets/avatar1.png";
+      case 1:
+        return "assets/avatar2.png";
+      case 2:
+        return "assets/avatar3.png";
+      case 3:
+        return "assets/avatar4.png";
+      default:
+        return 'assets/no_profile.png'; // index가 1이거나 없는 경우에는 null을 저장합니다.
+    }
+  }
 
   Future<void> _withDraw() async {
     final info = {
@@ -114,7 +212,7 @@ class _MyPageState extends State<_MyPage> {
                                 left: 0,
                                 right: 0,
                                 child: Image.asset(
-                                'assets/no_profile.png',
+                                setImageByIndex(_userImageIndex),
                                 height: 130,
                                 fit: BoxFit.contain)),
                             Positioned(
@@ -122,7 +220,7 @@ class _MyPageState extends State<_MyPage> {
                               left: 0,// 텍스트를 이미지의 맨 아래로 정렬
                               right: 0,
                               child: Text(
-                                '로그인이 필요합니다.',
+                                _userName,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 15,
@@ -136,8 +234,18 @@ class _MyPageState extends State<_MyPage> {
                       Column(
                         children: [
                           GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamed(context, '/logInPage'); // 로그인 페이지 이동
+                            onTap: () async{
+                              var token = await _readToken();
+                              if(token == null) {
+                                Navigator.pushNamed(context, '/logInPage');
+                              }
+                              else {
+                                _prefs.remove('jwt_token');
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => MyPage()), // MyPage는 현재 페이지의 이름
+                                );
+                              }
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(3.0),
@@ -150,7 +258,7 @@ class _MyPageState extends State<_MyPage> {
                                     left: 0, // 텍스트를 중앙에 정렬
                                     right: 0, // 텍스트를 중앙에 정렬
                                     child: Text(
-                                      '로그인',
+                                      _logincheck,
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontSize: 11,
@@ -165,8 +273,14 @@ class _MyPageState extends State<_MyPage> {
                           ),
                           SizedBox(height: 20),
                           GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamed(context, '/changeInfo'); // 최근 여행 페이지 이동
+                            onTap: () async{
+                              var token = await _readToken();
+                              if(token == null) {
+                                showAlertDialog(context);
+                              }
+                              else {
+                                Navigator.pushNamed(context, '/changeInfo'); // 최근 여행 페이지 이동
+                              }
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(3.0),
@@ -255,9 +369,14 @@ class _MyPageState extends State<_MyPage> {
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
                         child: GestureDetector(
-                          onTap: () {
-                            _withDraw();
-                            //Navigator.pushNamed(context, '/signUpPage');
+                          onTap: () async{
+                            var token = await _readToken();
+                            if(token == null) {
+                              showAlertDialog(context);
+                            }
+                            else {
+                              _withDraw();
+                            }
                           },
                           child: Text(
                             "회원탈퇴",

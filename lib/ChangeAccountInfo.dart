@@ -84,7 +84,7 @@ class ChangeInfoState extends State<_ChangeInfo> {
         'password': password,
         'email': email,
         'pfImg_id': pfImg_id,
-        'user_id' : 1
+        'user_id' : 14
       });
       print(body);
       var response = await http.put(
