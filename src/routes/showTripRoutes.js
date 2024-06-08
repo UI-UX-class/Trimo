@@ -3,7 +3,7 @@ const router = express.Router();
 const showTripService = require("../service/showTripService");
 const jwt = require('../util/jwt');
 
-// 게시물 확인 ->
+// 게시물 확인
 router.post("/", async (req, res) => {
     console.log("Routes In1");
     try {

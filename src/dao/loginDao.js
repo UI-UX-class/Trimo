@@ -1,4 +1,4 @@
-const { query } = require('express');
+const { query } = require('express'); //-> 이거 필요함?
 const db = require('../config/db')
 
 function findId(req) {
