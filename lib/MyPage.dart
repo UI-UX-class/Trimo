@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import './main.dart';
 import './NewPage.dart';
 import './ChangeAccountInfo.dart';
@@ -25,6 +26,93 @@ class _MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<_MyPage> {
+
+  late SharedPreferences _prefs;
+
+  @override
+  void initState() {
+    super.initState();
+    _initApp();
+  }
+
+  Future<void> _initApp() async {
+    await _initSharedPreferences();
+    await _fetchUser();
+  }
+
+  Future<void> _fetchUser() async{  //메인에서 최근 애 보여주는 친구
+    //임시로 토큰 삭제 진행
+    //_prefs.remove('jwt_token');
+    final token = await _readToken();
+
+    print('main read data');
+    print(token);
+
+    if(token == null) {
+      showAlertDialog(context);
+    }
+    else {
+      Navigator.pushNamed(context, '/changeInfo'); // 최근 여행 페이지 이동
+    }
+
+    final url = 'http://10.0.2.2:3000/getnote/recent';
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-type': 'application/json',
+        'jwt_token' : token ?? ''},
+    );
+    print(response.headers['jwt_token']);
+    if (response.statusCode == 200) {
+      final responseBody = jsonDecode(response.body);
+      setState(() {
+        trip = responseBody['Data'];
+        var newData = trip[0]['country'];
+        print(newData);
+        print('메인 - 최근 일지 불러오기 데이터 확인\n');
+        print(trip);
+        title = trip[0]['country'];
+        start_date = trip[0]['start_date'].split('T')[0];
+        end_date = trip[0]['end_date'].split('T')[0];
+        travel_id = trip[0]['travel_id'];
+        print(travel_id);
+      });
+    } else {
+      print('Main Recent Fail');
+    }
+  }
+
+  // 패키지 객체를 초기화 해주는 친구 -> 모든 파일에 필요 !
+  Future<void> _initSharedPreferences() async {
+    _prefs = await SharedPreferences.getInstance();
+  }
+  //토큰 불러오는 함수.
+  Future<String?> _readToken() async {
+    final myToken = _prefs.getString('jwt_token');
+    print('token read success !!');
+    print(myToken);
+    print('\n');
+    return myToken;
+  }
+
+  void showAlertDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("알림"),
+          content: Text("로그인 후 이용해주세요."),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   Future<void> _withDraw() async {
     final info = {
@@ -165,8 +253,14 @@ class _MyPageState extends State<_MyPage> {
                           ),
                           SizedBox(height: 20),
                           GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamed(context, '/changeInfo'); // 최근 여행 페이지 이동
+                            onTap: () async{
+                              var token = await _readToken();
+                              if(token == null) {
+                                showAlertDialog(context);
+                              }
+                              else {
+                                Navigator.pushNamed(context, '/changeInfo'); // 최근 여행 페이지 이동
+                              }
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(3.0),
@@ -255,9 +349,14 @@ class _MyPageState extends State<_MyPage> {
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
                         child: GestureDetector(
-                          onTap: () {
-                            _withDraw();
-                            //Navigator.pushNamed(context, '/signUpPage');
+                          onTap: () async{
+                            var token = await _readToken();
+                            if(token == null) {
+                              showAlertDialog(context);
+                            }
+                            else {
+                              _withDraw();
+                            }
                           },
                           child: Text(
                             "회원탈퇴",

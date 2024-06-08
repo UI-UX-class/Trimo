@@ -160,6 +160,26 @@ class _MainPageState extends State<MainPage> {
       print('Main Recent Fail');
     }
   }
+  // 로그인 알림창.
+  void showAlertDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("알림"),
+          content: Text("로그인 후 이용해주세요."),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -200,12 +220,17 @@ class _MainPageState extends State<MainPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       GestureDetector(
-                          onTap: () {
-                            //Navigator.pushNamed(context, '/showTrip'); // 최근 여행 페이지 이동
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => ShowTrip(tripId: travel_id))
-                            );
+                          onTap: () async{
+                            var token = await _readToken();
+                            if(token == null) {
+                              showAlertDialog(context);
+                            }
+                            else {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => ShowTrip(tripId: travel_id))
+                              );
+                            }
                           },
                           child: Stack(children: <Widget>[
                             ClipRRect(
@@ -248,26 +273,32 @@ class _MainPageState extends State<MainPage> {
                       Column(
                         children: [
                           GestureDetector(
-                            onTap: () {
-                              showModalBottomSheet<void>(
+                            onTap: () async {
+                              var token = await _readToken();
+                              if(token == null) {
+                                showAlertDialog(context);
+                              }
+                              else {
+                                showModalBottomSheet<void>(
                                 context: context,
                                 isScrollControlled: true,
                                 backgroundColor: Colors.white,
                                 barrierColor: Colors.transparent,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(15.0),
-                                  ),
-                                  side: BorderSide(
-                                    color: Colors.black,
-                                    width: 1,
+                                  top: Radius.circular(15.0),
+                                ),
+                                side: BorderSide(
+                                  color: Colors.black,
+                                  width: 1,
                                   ),
                                 ),
                                 builder: (BuildContext context) {
                                   return WriteTrip();
-                                },
-                              ); // 새로운 여행 페이지 이동
-                            },
+                                  },
+                                );
+                              }
+                            },// 새로운 여행 페이지 이동
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(3.0),
                               child: Stack(
@@ -384,8 +415,7 @@ class _MainPageState extends State<MainPage> {
                         onTap: () async{
                           var token = await _readToken();
                           if(token == null) {
-                            print('로그인 하세용 ~ ! ! ');
-                            // 여기 나중에 알림창 띄울거임 !!
+                            showAlertDialog(context);
                           }
                           else {
                             print(token);
