@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -8,6 +7,7 @@ import './main.dart';
 import './NewPage.dart';
 import './ChangeAccountInfo.dart';
 import './SignIn.dart';
+
 
 void main() {
   runApp(MyPage());
@@ -26,6 +26,9 @@ class _MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<_MyPage> {
+  String _logincheck = "로그인";
+  String _userName = "로그인이 필요합니다.";
+  int _userImageIndex = -1;
 
   late SharedPreferences _prefs;
 
@@ -49,35 +52,27 @@ class _MyPageState extends State<_MyPage> {
     print(token);
 
     if(token == null) {
-      showAlertDialog(context);
+      // showAlertDialog(context);
     }
     else {
-      Navigator.pushNamed(context, '/changeInfo'); // 최근 여행 페이지 이동
-    }
-
-    final url = 'http://10.0.2.2:3000/getnote/recent';
-    final response = await http.post(
-      Uri.parse(url),
-      headers: {'Content-type': 'application/json',
-        'jwt_token' : token ?? ''},
-    );
-    print(response.headers['jwt_token']);
-    if (response.statusCode == 200) {
-      final responseBody = jsonDecode(response.body);
-      setState(() {
-        trip = responseBody['Data'];
-        var newData = trip[0]['country'];
-        print(newData);
-        print('메인 - 최근 일지 불러오기 데이터 확인\n');
-        print(trip);
-        title = trip[0]['country'];
-        start_date = trip[0]['start_date'].split('T')[0];
-        end_date = trip[0]['end_date'].split('T')[0];
-        travel_id = trip[0]['travel_id'];
-        print(travel_id);
-      });
-    } else {
-      print('Main Recent Fail');
+      final url = 'http://10.0.2.2:3000/user/profile';
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-type': 'application/json',
+          'jwt_token' : token ?? ''},
+      );
+      print(response.body);
+      if (response.statusCode == 200) {
+        final profile = jsonDecode(response.body);
+        print(profile['Data'][0]['nickname']);
+        setState(() {
+          _userName = profile['Data'][0]['nickname'];
+          _userImageIndex = profile['Data'][0]['pfImg_id'];
+          _logincheck = "로그아웃";
+        });
+      } else {
+        print('Main Recent Fail');
+      }
     }
   }
 
@@ -112,6 +107,21 @@ class _MyPageState extends State<_MyPage> {
         );
       },
     );
+  }
+
+  String setImageByIndex(int index) {
+    switch (index) {
+      case 0:
+        return "assets/avatar1.png";
+      case 1:
+        return "assets/avatar2.png";
+      case 2:
+        return "assets/avatar3.png";
+      case 3:
+        return "assets/avatar4.png";
+      default:
+        return 'assets/no_profile.png'; // index가 1이거나 없는 경우에는 null을 저장합니다.
+    }
   }
 
   Future<void> _withDraw() async {
@@ -202,7 +212,7 @@ class _MyPageState extends State<_MyPage> {
                                 left: 0,
                                 right: 0,
                                 child: Image.asset(
-                                'assets/no_profile.png',
+                                setImageByIndex(_userImageIndex),
                                 height: 130,
                                 fit: BoxFit.contain)),
                             Positioned(
@@ -210,7 +220,7 @@ class _MyPageState extends State<_MyPage> {
                               left: 0,// 텍스트를 이미지의 맨 아래로 정렬
                               right: 0,
                               child: Text(
-                                '로그인이 필요합니다.',
+                                _userName,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 15,
@@ -224,8 +234,18 @@ class _MyPageState extends State<_MyPage> {
                       Column(
                         children: [
                           GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamed(context, '/logInPage'); // 로그인 페이지 이동
+                            onTap: () async{
+                              var token = await _readToken();
+                              if(token == null) {
+                                Navigator.pushNamed(context, '/logInPage');
+                              }
+                              else {
+                                _prefs.remove('jwt_token');
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => MyPage()), // MyPage는 현재 페이지의 이름
+                                );
+                              }
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(3.0),
@@ -238,7 +258,7 @@ class _MyPageState extends State<_MyPage> {
                                     left: 0, // 텍스트를 중앙에 정렬
                                     right: 0, // 텍스트를 중앙에 정렬
                                     child: Text(
-                                      '로그인',
+                                      _logincheck,
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontSize: 11,
