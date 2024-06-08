@@ -90,19 +90,18 @@ function getUser(idx) {
     })
 }
 
-function editUser(req) {
+function editUser(idx, req) {
     return new Promise((resolve, reject) => {
         var queryData = `update user set nickname = '${req.nickname}', password = '${req.password}', 
-        email = '${req.email}', pfImg_id = '${req.pfImg_id}' where user_id = ${req.user_id}`;
+        email = '${req.email}', pfImg_id = '${req.pfImg_id}' where user_id = ${idx}`;
         db.query(queryData, (error, db_data) => {
             if(error) {
                 console.error(queryData + "\n" + error + "editUser DB Error [user]");
                 reject("DB ERR")
             }
             else {
-//                console.log('회원수정 Success ▶\t' + idx + "\t성공\n");
-//                resolve(idx);
-                resolve(db_data);
+                console.log('회원수정 Success ▶\t' + idx + "\t성공\n");
+                resolve(idx);
             }
         })
     })

@@ -104,16 +104,16 @@ async function getUser(idx) {
     }
 }
 
-async function editUser(req) {
-    console.log('edit user service',req);
+async function editUser(idx, req) {
+    console.log('edit user service', idx, ' + ', req);
     try {
-        if(!req) {
+        if(!idx || !req) {
             return {
                 "Message" : "요청값이 없습니다.",
                 "Status" : 406
             }
         }
-        const editUser_id = await loginDao.editUser(req);
+        const editUser_id = await loginDao.editUser(idx, req);
         console.log("editUser_id 확인", editUser_id);
         return {
             "Message" : "성공",
