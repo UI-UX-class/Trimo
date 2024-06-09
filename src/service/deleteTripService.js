@@ -2,8 +2,7 @@ const deleteTripDao = require("../dao/deleteTripDao");
 
 async function deleteTrip(data) {
     try {
-        console.log("서비스 들어옴")
-        console.log(data);
+        console.log("delete trip service", data);
         const result = await deleteTripDao.deleteTrip(data.travel_id);
         return {
             "Message": "성공",

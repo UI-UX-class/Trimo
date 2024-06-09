@@ -138,7 +138,7 @@ class _MainPageState extends State<MainPage> {
     //임시로 토큰 삭제 진행
     //_prefs.remove('jwt_token');
     final token = await _readToken();
-    print('main read data');
+    print('main read token');
     print(token);
     final url = 'http://10.0.2.2:3000/getnote/recent';
     final response = await http.post(
@@ -156,8 +156,8 @@ class _MainPageState extends State<MainPage> {
         print('메인 - 최근 일지 불러오기 데이터 확인\n');
         print(trip);
         title = trip[0]['country'];
-        start_date = trip[0]['start_date'].split('T')[0];
-        end_date = trip[0]['end_date'].split('T')[0];
+        start_date = trip[0]['start_date'].split('T')[0].substring(5);
+        end_date = trip[0]['end_date'].split('T')[0].substring(5);
         travel_id = trip[0]['travel_id'];
         print(travel_id);
       });
@@ -381,7 +381,14 @@ class _MainPageState extends State<MainPage> {
                             onTap: () async{
                               var token = await _readToken();
                               if(token == null) {
-                                Navigator.pushNamed(context, '/signInPage'); // 로그인 페이지 이동
+                                final result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => SignIn())
+                                );
+                                if(result == true){
+                                  _fetchUser();
+                                  _fetchMain();
+                                }
                               }
                             },
                             child: ClipRRect(
@@ -442,8 +449,14 @@ class _MainPageState extends State<MainPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, '/myPage'); // 최근 여행 페이지 이동
+                        onTap: () async{
+                          final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context)=> MyPage()));
+                          if (result == true) {
+                            _fetchUser();
+                            _fetchMain();
+                          }
                         },
                         child: ClipRRect(
                             borderRadius: BorderRadius.circular(3.0),
@@ -482,6 +495,7 @@ class _MainPageState extends State<MainPage> {
                             );
                             if (result != null && result == true) {
                               _fetchMain();
+                              _fetchUser();
                             }
                           }
                         },

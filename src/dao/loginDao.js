@@ -130,7 +130,7 @@ function getProfile(idx) {
                 console.error(queryData + "\n" + "get profile DB Error [user]");
                 reject("DB ERR")
             } else {
-                console.log('프로필 정보 불러오기 Success ▶\t' + idx.user_id + "\t성공\n");
+                console.log('프로필 정보 불러오기 Success ▶\t' + idx + "\t성공\n");
                 resolve(db_data);
             }
         })

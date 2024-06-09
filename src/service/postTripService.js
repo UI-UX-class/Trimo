@@ -1,9 +1,8 @@
 const postTripDao = require("../dao/postTripDao");
 
-async function postTrip(data) {
+async function postTrip(idx, data) {
     try {
         const details = data.trip_place;
-
         const detailsJSON = JSON.stringify(details);
 
         const now = new Date();
@@ -14,8 +13,8 @@ async function postTrip(data) {
         const minutes = String(now.getMinutes());
         const seconds = String(now.getSeconds());
 
-        const postData = {  //따옴표가 없는데?
-            user_id : 1,
+        const postData = {
+            user_id : idx,
             trip_place : detailsJSON,
             time : `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
         }

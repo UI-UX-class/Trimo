@@ -1,15 +1,15 @@
 const showTripYearDao = require("../dao/showTripYearDao")
 
-async function tripListYear(idx){
+async function tripListYear(idx, req){
     try{
         console.log('show year service in')
-        if(!idx){
+        if(!idx || !req){
             return {
-                "Message" : "id 값이 없습니다.",
+                "Message" : "요청값이 없습니다.",
                 "Status" : 406
             }
         }
-        const trip_data = await showTripYearDao.showTripListYear(idx);
+        const trip_data = await showTripYearDao.showTripListYear(idx, req);
         return {
             "Message" : "성공",
             "Status" : 200,

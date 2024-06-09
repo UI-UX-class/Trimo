@@ -63,9 +63,8 @@ class _MyPageState extends State<_MyPage> {
       );
       print(response.body);
       if (response.statusCode == 200) {
-        final profile = jsonDecode(response.body);
-        print(profile['Data'][0]['nickname']);
         setState(() {
+          final profile = jsonDecode(response.body);
           _userName = profile['Data'][0]['nickname'];
           _userImageIndex = profile['Data'][0]['pfImg_id'];
           _logincheck = "로그아웃";
@@ -142,7 +141,7 @@ class _MyPageState extends State<_MyPage> {
       print('????');
       if(response.statusCode == 200) {
         print('성공했다면 나올 말');
-        Navigator.pushNamed(context, '/mainPage');
+        Navigator.pop(context, '/mainPage');
       }else{
         print('데이터 저장 실패: ${response.statusCode}');
         print('응답 내용: ${response.body}');
@@ -159,7 +158,7 @@ class _MyPageState extends State<_MyPage> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pop(context,true);
           },
         ),
         title: const Text(''),
@@ -237,14 +236,17 @@ class _MyPageState extends State<_MyPage> {
                             onTap: () async{
                               var token = await _readToken();
                               if(token == null) {
-                                Navigator.pushNamed(context, '/logInPage');
+                                final result = await Navigator.pushNamed(
+                                  context, 
+                                  '/logInPage'
+                                  );
+                                if(result == true){
+                                  _fetchUser();
+                                }
                               }
                               else {
                                 _prefs.remove('jwt_token');
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => MyPage()), // MyPage는 현재 페이지의 이름
-                                );
+                                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>MainPage()));
                               }
                             },
                             child: ClipRRect(

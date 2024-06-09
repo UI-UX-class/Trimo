@@ -1,5 +1,5 @@
 import 'dart:ffi';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -22,25 +22,38 @@ class TripList extends StatefulWidget {
 
 class _TripListState extends State<TripList> {
   List trips = [];
+  late SharedPreferences _prefs;
 
   @override
   void initState() {
     super.initState();
-    _fetchTripList();
+    _initApp();
+  }
+  Future<void> _initApp() async {
+    await _initSharedPreferences();
+    await _fetchTripList();
+  }
+  Future<void> _initSharedPreferences() async {
+    _prefs = await SharedPreferences.getInstance();
+  }
+  Future<String?> _readToken() async {
+    final myToken = _prefs.getString('jwt_token');
+    print('token read success !!');
+    print(myToken);
+    print('\n');
+    return myToken;
   }
 
-  // Future<void> _fetchTripListWithDelay() async {
-  //   await Future.delayed(Duration(milliseconds: 500));  // 0.3초 대기
-  //   _fetchTripList();
-  // }
-
   Future<void> _fetchTripList() async {
+    final token = await _readToken();
+    print('trip list read token');
+    print(token);
     final url = 'http://10.0.2.2:3000/getYearsNote';
     final response = await http.post(
       Uri.parse(url),
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json',
+      'jwt_token' : token ?? ''},
       body: jsonEncode({
-        'user_id': widget.userId,
         'year': widget.year,
       }),
     );
