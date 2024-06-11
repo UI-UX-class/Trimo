@@ -54,33 +54,6 @@ async function recentTrip(idx) {
     }
 }
 
-// async function tripListYear(idx, req) {
-//     try {
-//         if (!idx || !req) {
-//             return {
-//                 "Message": "id 값이 없습니다.",
-//                 "Status": 406
-//             };
-//         }
-//         const trip_data = await showTripDao.showTripListYear(idx, req);
-//         const trip_list = [];
-//         for (const data of trip_data) {
-//             trip_list.push(data);
-//         }
-//         return {
-//             "Message": "성공",
-//             "Status": 200,
-//             "Data": trip_list
-//         };
-//     } catch (err) {
-//         return {
-//             "Message": "실패",
-//             "Status": 400,
-//             "Error_Message": err
-//         };
-//     }
-// }
-
 // 새로운 함수 추가
 async function getTripById(id) {
     console.log("Service In - GetTripById");
@@ -103,6 +76,5 @@ async function getTripById(id) {
 module.exports = {
     trip,
     recentTrip,
-    //tripListYear,
     getTripById // 새로운 함수 추가
 };
