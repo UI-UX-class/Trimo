@@ -8,8 +8,7 @@ router.post('/login', async(req, res) => {
     try {
         const loginData = await loginService.login(req.body);
         const token = loginData.jwt_token
-        console.log("확인", token);
-        res.cookie('token') //내가 한건가??
+        console.log("login 토큰 확인", token);
         res.status(loginData.Status).json(loginData);
     } catch (err) {
         console.log(err);
@@ -31,7 +30,6 @@ router.post('/signup', async(req, res) => {
 router.post('/edit', jwt.authUtil.checkToken, async(req, res) => {
     const jwt_token = req.headers.jwt_token;
     const token = await jwt.verify(jwt_token);
-    console.log("토큰 verify 확인 : ", token.idx);
     console.log('edit get user router', token.idx);
     try {
         const getUser_data = await loginService.getUser(token.idx);
@@ -43,10 +41,9 @@ router.post('/edit', jwt.authUtil.checkToken, async(req, res) => {
 })
 
 router.put('/edit', jwt.authUtil.checkToken, async(req, res) => {
-    console.log("edit user router", req.body);
     const jwt_token = req.headers.jwt_token;
     const token = await jwt.verify(jwt_token);
-    console.log("토큰 verify 확인 : ", token);
+    console.log("edit user router", token.idx, req.body);
     try {
         const editUser_data = await loginService.editUser(token.idx, req.body);
         res.status(editUser_data.Status).json(editUser_data);
@@ -59,7 +56,7 @@ router.put('/edit', jwt.authUtil.checkToken, async(req, res) => {
 router.delete('/withdraw', jwt.authUtil.checkToken, async(req, res) => {
     const jwt_token = req.headers.jwt_token;
     const token = await jwt.verify(jwt_token);
-    console.log("토큰 verify 확인 : ", token.idx);
+    console.log("withdraw 토큰 verify 확인 : ", token.idx);
     try {
         const deleteUser_data = await loginService.deleteUser(token.idx);
         res.status(deleteUser_data.Status).json(deleteUser_data);
@@ -72,7 +69,7 @@ router.delete('/withdraw', jwt.authUtil.checkToken, async(req, res) => {
 router.post('/profile', jwt.authUtil.checkToken, async(req, res) => {
     const jwt_token = req.headers.jwt_token;
     const token = await jwt.verify(jwt_token);
-    console.log("토큰 verify 확인 : ", token.idx);
+    console.log("get profile 토큰 verify 확인 : ", token.idx);
     try {
         const profile_data = await loginService.getProfile(token.idx);
         res.status(profile_data.Status).json(profile_data);

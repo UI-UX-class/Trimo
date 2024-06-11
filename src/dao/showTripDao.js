@@ -26,32 +26,13 @@ async function recentTrip(idx) {
         db.query(queryData, (error, db_data) => {
             if (error) {
                 console.error(
-                    'DB error [tripList]' +
+                    'DB error [travel]' +
                     '\n \t' + queryData +
                     '\n \t' + error
                 );
                 reject("DB ERR");
             }
             resolve(db_data);
-        });
-    });
-}
-
-async function showTripListYear(req) {
-    console.log("Dao In");
-    return new Promise((resolve, reject) => {
-        var queryData = `SELECT title, country, start_date, end_date, image_first FROM travel WHERE YEAR(start_date) = ${req.year} AND user_id = ${req.user_id}`;
-        db.query(queryData, (error, db_data) => {
-            if (error) {
-                console.error(
-                    'DB error [tripList]' +
-                    '\n \t' + queryData +
-                    '\n \t' + error
-                );
-                reject("DB ERR");
-            }
-            resolve(db_data);
-            console.log("Dao out");
         });
     });
 }
@@ -79,6 +60,5 @@ async function getTripById(id) {
 module.exports = {
     showTrip,
     recentTrip,
-    showTripListYear,
     getTripById // 새로운 함수 추가
 };

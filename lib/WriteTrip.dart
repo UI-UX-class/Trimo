@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
@@ -25,6 +25,7 @@ class _WriteTripState extends State<WriteTrip> {
   late TextEditingController _startDateController;
   late TextEditingController _endDateController;
   late TextEditingController _tripDiaryController;
+  late SharedPreferences _prefs;
   int _daysDifference = 0;
 
   int _setIndex = 1; // 1일차, 2일차 구분하는 index
@@ -40,12 +41,24 @@ class _WriteTripState extends State<WriteTrip> {
   @override
   void initState() {
     super.initState();
+    _initSharedPreferences();
     _tripNameController = TextEditingController();
     _tripWhereController = TextEditingController();
     _startDateController = TextEditingController();
     _endDateController = TextEditingController();
     _tripDiaryController = TextEditingController();
     _tripPlace[1] = ["출발", "도착"];
+  }
+
+  Future<void> _initSharedPreferences() async {
+    _prefs = await SharedPreferences.getInstance();
+  }
+  Future<String?> _readToken() async {
+    final myToken = _prefs.getString('jwt_token');
+    print('write trip token read success !!');
+    print(myToken);
+    print('\n');
+    return myToken;
   }
 
   // 일차 추가 함수
@@ -88,16 +101,20 @@ class _WriteTripState extends State<WriteTrip> {
 
     var uri = "http://10.0.2.2:3000/newnote";
     try {
+      final token = await _readToken();
+      print('write trip read token');
+      print(token);
       var body = json.encode(newTrip.toJson());
       var response = await http.post(
         Uri.parse(uri),
-        headers: {"Content-Type": "application/json"},
+        headers: {"Content-Type": "application/json",
+        'jwt_token' : token ?? ''},
         body: body,
       );
       print("확인절차 확인절차 확인절차");
       print(response.body);
       if (response.statusCode == 200) {
-        print('데이터 저장 성공');
+        print('write trip 데이터 저장 성공');
         final responseBody = jsonDecode(response.body);
         print(responseBody);
         Navigator.pop(

@@ -137,12 +137,10 @@ build/Release
 # Dependency directories
 node_modules/
 jspm_packages/
-<<<<<<< HEAD
-=======
 package-lock.json
 package.json
 .env
->>>>>>> a084f0f84382e9e0d247d2d7c7b3866d14977354
+UIUX_README.txt
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/

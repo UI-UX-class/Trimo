@@ -38,7 +38,7 @@ class _SignIn extends State<SignIn> {
   }
   Future<String?> _readToken() async {
     final myToken = _prefs.getString('jwt_token');
-    print('token read success !!');
+    print('sign in token read success !!');
     print(myToken);
     print('\n');
     return myToken;
@@ -70,10 +70,9 @@ class _SignIn extends State<SignIn> {
         print('jwt token 확인');
         print(_readToken());
         //Navigator.pushNamed(context, '/mainPage', arguments: {'user_id' : 1});
-        Navigator.pushReplacement(
+        Navigator.pop(
             context,
-            MaterialPageRoute(
-                builder: (context) => MainPage())
+            true
         );
       }else{
         print('데이터 저장 실패: ${response.statusCode}');

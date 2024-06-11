@@ -1,37 +1,12 @@
 const jwt = require('jsonwebtoken');
 const secretKey = require('../config/secretkey').secretKey
 const basic_option = require('../config/secretkey').option
-const short_option = require('../config/secretkey').option_short
-const token_ex = -3 //토큰 만료
-const token_in = -2 //유효하지 않은 토큰
 
-//짧은 애
+// 토큰 발급
 const accessToken = (payload) => {
-    const token = jwt.sign(payload, secretKey, short_option);
+    const token = jwt.sign(payload, secretKey, basic_option);
     return token;
 }
-
-//긴 애 -> 필요 X
-// const basicToken = (payload) => {
-//     const token = jwt.sign(payload, secretKey, basic_option);
-//     return token;
-// }
-
-//다시 만드는 애 -> 수정 필요
-// const refresshToken = (token) => {
-//     try {
-//         const decoded = jwt.verify(token, secretKey);
-//         const payload = {
-//             idx: decoded.idx,
-//             id: decoded.id
-//         };
-//         const newToken = generateToken(payload);
-//         return newToken;
-//     } catch (error) {
-//         console.error('Error Refreshing Token : ', error);
-//         return null;
-//     }
-// }
 
 // 토큰 여부, 유효성 확인
 const authUtil = {

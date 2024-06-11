@@ -5,15 +5,10 @@ async function deleteTrip(travel_id) {
         var queryData = `delete from travel where travel_id=${travel_id}`;
         db.query(queryData, (error, db_data) => {
             if (error) {
-                console.error(
-                    'DB error [postTrip]' +
-                    '\n \t' + queryData +
-                    '\n \t' + error
-                );
-                return reject("DB ERR");
+                console.error(queryData + "\n" + "delete trip DB Error [travel]");
+                reject("DB ERR")
             }
-            resolve(db_data.insertId);
-            console.log("Dao out");
+            resolve(db_data);
         });
     });
 }

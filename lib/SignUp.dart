@@ -28,7 +28,6 @@ class _SignUp extends State<SignUp> {
   late ScrollController _scrollController;
   int _selectedAvatarIndex = -1; // 선택된 이미지의 인덱스를 저장
   String _selectedAvatarPath = '';
-  //List<String> avaterPath = ["assets/avatar1.png","assets/avatar2.png", "assets/avatar3.png", "assets/avatar4.png"];
 
   // TextEditingController 선언
   late final TextEditingController _nicknameController;

@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:trimo/MyPage.dart';
@@ -26,6 +26,7 @@ class ChangeInfoState extends State<_ChangeInfo> {
   late ScrollController _scrollController;
   int _selectedAvatarIndex = -1; // 선택된 이미지의 인덱스를 저장
   String _selectedAvatarPath = '';
+  late SharedPreferences _prefs;
 
   // TextEditingController 선언
   TextEditingController _nicknameController = TextEditingController();
@@ -37,22 +38,36 @@ class ChangeInfoState extends State<_ChangeInfo> {
   void initState() {
     super.initState();
     _scrollController = ScrollController();
-    _fetchUserData();
+    _initApp();
+  }
+
+  Future<void> _initApp() async {
+    await _initSharedPreferences();
+    await _fetchUserData();
+  }
+
+  Future<void> _initSharedPreferences() async {
+    _prefs = await SharedPreferences.getInstance();
+  }
+  Future<String?> _readToken() async {
+    final myToken = _prefs.getString('jwt_token');
+    print('token read success !!');
+    print(myToken);
+    print('\n');
+    return myToken;
   }
 
   // 페이지 들어오면 초기값 get
   Future<void> _fetchUserData() async {
-    const user_id = 1;
+    final token = await _readToken();
+    print('get profile read token');
+    print(token);
     final uri = 'http://10.0.2.2:3000/user/edit';
-    final body = jsonEncode({
-      'user_id': user_id,
-    });
     var response = await http.post(
       Uri.parse(uri),
-      headers: {"Content-Type": "application/json"},
-      body: body,
+      headers: {"Content-Type": "application/json",
+      'jwt_token' : token ?? ''},
     );
-
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);
       print(responseBody["Data"][0]);
@@ -78,6 +93,9 @@ class ChangeInfoState extends State<_ChangeInfo> {
 
     var uri = "http://10.0.2.2:3000/user/edit";
     try {
+      final token = await _readToken();
+      print('get profile read token');
+      print(token);
       var body = json.encode({
         'nickname': nickname,
         'id': id,
@@ -89,10 +107,10 @@ class ChangeInfoState extends State<_ChangeInfo> {
       print(body);
       var response = await http.put(
         Uri.parse(uri),
-        headers: {"Content-Type": "application/json"},
+        headers: {"Content-Type": "application/json",
+        'jwt_token' : token ?? ''},
         body: body,
       );
-
       if (response.statusCode == 200) {
         Navigator.pushReplacement(
           context,

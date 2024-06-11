@@ -7,15 +7,10 @@ async function postTrip(data, postData) {
                          '${data.start_date}', '${data.end_date}', ${data.days}, '${postData.time}','${data.image_first}', '${data.image_second}', '${postData.trip_place}')`;
         db.query(queryData, (error, db_data) => {
             if (error) {
-                console.error(
-                    'DB error [postTrip]' +
-                    '\n \t' + queryData +
-                    '\n \t' + error
-                );
-                return reject("DB ERR");
+                console.error(queryData + "\n" + "write trip DB Error [travel]");
+                reject("DB ERR")
             }
             resolve(db_data.insertId);
-            console.log("Dao out");
         });
     });
 }

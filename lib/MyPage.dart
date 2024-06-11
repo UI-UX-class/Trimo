@@ -43,7 +43,7 @@ class _MyPageState extends State<_MyPage> {
     await _fetchUser();
   }
 
-  Future<void> _fetchUser() async{  //메인에서 최근 애 보여주는 친구
+  Future<void> _fetchUser() async{
     //임시로 토큰 삭제 진행
     //_prefs.remove('jwt_token');
     final token = await _readToken();
@@ -63,9 +63,8 @@ class _MyPageState extends State<_MyPage> {
       );
       print(response.body);
       if (response.statusCode == 200) {
-        final profile = jsonDecode(response.body);
-        print(profile['Data'][0]['nickname']);
         setState(() {
+          final profile = jsonDecode(response.body);
           _userName = profile['Data'][0]['nickname'];
           _userImageIndex = profile['Data'][0]['pfImg_id'];
           _logincheck = "로그아웃";
@@ -76,11 +75,11 @@ class _MyPageState extends State<_MyPage> {
     }
   }
 
-  // 패키지 객체를 초기화 해주는 친구 -> 모든 파일에 필요 !
+  // 패키지 객체를 초기화 해주는 친구
   Future<void> _initSharedPreferences() async {
     _prefs = await SharedPreferences.getInstance();
   }
-  //토큰 불러오는 함수.
+  // 토큰 불러오는 함수
   Future<String?> _readToken() async {
     final myToken = _prefs.getString('jwt_token');
     print('token read success !!');
@@ -125,24 +124,20 @@ class _MyPageState extends State<_MyPage> {
   }
 
   Future<void> _withDraw() async {
-    final info = {
-      'user_id' : 15  //추후 수정
-    };
-    print('들어오긴 하나요...');
+    final token = await _readToken();
+    print('main read token');
+    print(token);
     var url = "http://10.0.2.2:3000/user/withdraw";
     try {
-      var body = json.encode(info);
-      print(body);
-      print('\n');
       var response = await http.delete(
         Uri.parse(url),
-        headers: {"Content-Type": "application/json"},
-        body : body,
+        headers: {"Content-Type": "application/json",
+        'jwt_token' : token ?? ''}
       );
       print('????');
       if(response.statusCode == 200) {
         print('성공했다면 나올 말');
-        Navigator.pushNamed(context, '/mainPage');
+        Navigator.pop(context, '/mainPage');
       }else{
         print('데이터 저장 실패: ${response.statusCode}');
         print('응답 내용: ${response.body}');
@@ -159,7 +154,7 @@ class _MyPageState extends State<_MyPage> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pop(context,true);
           },
         ),
         title: const Text(''),
@@ -237,14 +232,17 @@ class _MyPageState extends State<_MyPage> {
                             onTap: () async{
                               var token = await _readToken();
                               if(token == null) {
-                                Navigator.pushNamed(context, '/logInPage');
+                                final result = await Navigator.pushNamed(
+                                  context, 
+                                  '/logInPage'
+                                  );
+                                if(result == true){
+                                  _fetchUser();
+                                }
                               }
                               else {
                                 _prefs.remove('jwt_token');
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => MyPage()), // MyPage는 현재 페이지의 이름
-                                );
+                                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>MainPage()));
                               }
                             },
                             child: ClipRRect(
@@ -376,6 +374,7 @@ class _MyPageState extends State<_MyPage> {
                             }
                             else {
                               _withDraw();
+                              _prefs.remove('jwt_token');
                             }
                           },
                           child: Text(

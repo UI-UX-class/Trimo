@@ -57,7 +57,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   List trip = [];
-  String title = '';  //일단 제목이 있고 여행지가 없는건 아닌거같아서 여기에 여행지 박아두긴 함
+  String title = '';
   int travel_id = 0;
   String start_date = '';
   String end_date = '';
@@ -73,13 +73,6 @@ class _MainPageState extends State<MainPage> {
     super.initState();
     _initApp();
   }
-  // @override
-  // void didChangeAppLifecycleState(AppLifecycleState state) {
-  //   if (state == AppLifecycleState.detached) {
-  //     _deleteToken();
-  //     _loadToken();
-  //   }
-  // }
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -114,7 +107,7 @@ class _MainPageState extends State<MainPage> {
     await _fetchMain();
   }
 
-  // 패키지 객체를 초기화 해주는 친구 -> 모든 파일에 필요 !
+  // 패키지 객체를 초기화 해주는 친구
   Future<void> _initSharedPreferences() async {
     _prefs = await SharedPreferences.getInstance();
   }
@@ -138,7 +131,7 @@ class _MainPageState extends State<MainPage> {
     //임시로 토큰 삭제 진행
     //_prefs.remove('jwt_token');
     final token = await _readToken();
-    print('main read data');
+    print('main read token');
     print(token);
     final url = 'http://10.0.2.2:3000/getnote/recent';
     final response = await http.post(
@@ -156,8 +149,8 @@ class _MainPageState extends State<MainPage> {
         print('메인 - 최근 일지 불러오기 데이터 확인\n');
         print(trip);
         title = trip[0]['country'];
-        start_date = trip[0]['start_date'].split('T')[0];
-        end_date = trip[0]['end_date'].split('T')[0];
+        start_date = trip[0]['start_date'].split('T')[0].substring(5);
+        end_date = trip[0]['end_date'].split('T')[0].substring(5);
         travel_id = trip[0]['travel_id'];
         print(travel_id);
       });
@@ -209,11 +202,11 @@ class _MainPageState extends State<MainPage> {
       case 3:
         return "assets/avatar_4.png";
       default:
-        return 'assets/login.png'; // index가 1이거나 없는 경우에는 null을 저장합니다.
+        return 'assets/login.png'; // index가 1이거나 없는 경우에는 null을 저장
     }
   }
 
-  // 로그인 알림창.
+  // 로그인 알림창
   void showAlertDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -381,7 +374,14 @@ class _MainPageState extends State<MainPage> {
                             onTap: () async{
                               var token = await _readToken();
                               if(token == null) {
-                                Navigator.pushNamed(context, '/signInPage'); // 로그인 페이지 이동
+                                final result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => SignIn())
+                                );
+                                if(result == true){
+                                  _fetchUser();
+                                  _fetchMain();
+                                }
                               }
                             },
                             child: ClipRRect(
@@ -442,8 +442,14 @@ class _MainPageState extends State<MainPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, '/myPage'); // 최근 여행 페이지 이동
+                        onTap: () async{
+                          final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context)=> MyPage()));
+                          if (result == true) {
+                            _fetchUser();
+                            _fetchMain();
+                          }
                         },
                         child: ClipRRect(
                             borderRadius: BorderRadius.circular(3.0),
@@ -482,6 +488,7 @@ class _MainPageState extends State<MainPage> {
                             );
                             if (result != null && result == true) {
                               _fetchMain();
+                              _fetchUser();
                             }
                           }
                         },
