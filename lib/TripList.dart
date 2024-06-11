@@ -67,9 +67,7 @@ class _TripListState extends State<TripList> {
   }
 
   String formatDate(String dateStr) {
-    // Parse the date string
     DateTime date = DateTime.parse(dateStr);
-    // Format the date to only show month and day
     return DateFormat('MM/dd').format(date);
   }
 
